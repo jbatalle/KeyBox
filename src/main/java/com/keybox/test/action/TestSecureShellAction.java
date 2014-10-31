@@ -158,7 +158,7 @@ public class TestSecureShellAction extends ActionSupport implements ServletReque
             SystemStatusDB.setInitialSystemStatus(systemSelectId, userId);
             pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
 
-            AuthUtil.setSessionId(servletRequest.getSession(), SessionAuditDB.createSessionLog(userId));
+//            AuthUtil.setSessionId(servletRequest.getSession(), SessionAuditDB.createSessionLog(userId));
 
 
         }

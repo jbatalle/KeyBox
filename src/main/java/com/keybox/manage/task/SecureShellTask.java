@@ -17,12 +17,9 @@ package com.keybox.manage.task;
 
 import com.keybox.manage.util.SessionOutputUtil;
 import com.keybox.manage.model.SessionOutput;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-
 
 /**
  * Task to watch for output read from the ssh session stream
@@ -33,7 +30,6 @@ public class SecureShellTask implements Runnable {
     SessionOutput sessionOutput;
 
     public SecureShellTask(SessionOutput sessionOutput, InputStream outFromChannel) {
-
         this.sessionOutput = sessionOutput;
         this.outFromChannel = outFromChannel;
     }
@@ -42,25 +38,16 @@ public class SecureShellTask implements Runnable {
         InputStreamReader isr = new InputStreamReader(outFromChannel);
         BufferedReader br = new BufferedReader(isr);
         try {
-
             SessionOutputUtil.addOutput(sessionOutput.getSessionId(), sessionOutput);
-
             char[] buff = new char[1024];
             int read;
             while((read = br.read(buff)) != -1) {
-
                 SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getHostSystemId(), buff,0,read);
                 Thread.sleep(50);
             }
-
-
-
             SessionOutputUtil.removeOutput(sessionOutput.getSessionId(), sessionOutput.getHostSystemId());
-
         } catch (Exception ex) {
-
             ex.printStackTrace();
         }
     }
-
 }

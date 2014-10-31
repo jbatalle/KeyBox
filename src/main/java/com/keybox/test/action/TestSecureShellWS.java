@@ -61,7 +61,7 @@ public class TestSecureShellWS {
         this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         this.sessionId = AuthUtil.getSessionId(httpSession);
         this.session = session;
-
+System.out.println("TestSecureShellWS - sesionId :"+sessionId);
         Runnable run=new SentOutputTask(sessionId, session);
         Thread thread = new Thread(run);
         thread.start();

@@ -19,7 +19,6 @@ import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.ProfileDB;
 import com.keybox.manage.db.ScriptDB;
 import com.keybox.manage.db.SystemDB;
-import com.keybox.manage.db.UserProfileDB;
 import com.keybox.manage.model.*;
 import com.keybox.manage.util.SSHUtil;
 import com.opensymphony.xwork2.ActionSupport;
@@ -59,7 +58,7 @@ public class TestSystemAction extends ActionSupport implements ServletRequestAwa
             profileList=ProfileDB.getAllProfiles();
         } else {
             sortedSet = SystemDB.getUserSystemSet(sortedSet, userId);
-            profileList= UserProfileDB.getProfilesByUser(userId);
+//            profileList= UserProfileDB.getProfilesByUser(userId);
         }
         if (script != null && script.getId() != null) {
             script = ScriptDB.getScript(script.getId(), userId);

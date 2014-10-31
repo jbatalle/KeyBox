@@ -55,28 +55,15 @@ $(document).ready(function() {
             });
         } else {
             $(".output > .terminal > pre").show();
-
         }
-
    }
 
-
-
-
-
-
-
-  function loadTerms(){
-
+    function loadTerms(){
         $(".output").each(function (index, value){
-
                var id = $(this).attr("id").replace("output_", "");
-
-
-               $.getJSON('getJSONTermOutputForSession.action?sessionId=<s:property value="sessionAudit.id"/>&hostSystemId='+id+'&t='+new Date().getTime(), function(data) {
+                $.getJSON('getJSONTermOutputForSession.action?sessionId=<s:property value="sessionAudit.id"/>&hostSystemId='+id+'&t='+new Date().getTime(), function(data) {
                    $.each(data, function(key, val) {
                        if (val.output != '' && val.hostSystemId!=null) {
-
                                $("#output_"+val.hostSystemId+"> .terminal").empty();
                                var output=val.output;
                                output = output.replace(/\r\n\r\n/g, '\r\n \r\n');
@@ -84,14 +71,12 @@ $(document).ready(function() {
                                for(var i=0; i<outputList.length;i++){
                                    $("#output_"+val.hostSystemId+"> .terminal").append("<pre>"+outputList[i]+"</pre>");;
                                }
-
-
                        }
                    });
                 });
 
            });
-  }
+    }
 
   loadTerms();
 
@@ -163,8 +148,6 @@ $(document).ready(function() {
             <ul class="nav navbar-nav">
                  <li><a href="viewSessions.action">Exit Audit</a></li>
             </ul>
-
-
                 <div class="align-right">
                     <s:form id="filter_frm" theme="simple">
                         <s:label value=""/>
@@ -184,40 +167,22 @@ $(document).ready(function() {
     </div>
 </div>
 
-
 <div class="term-container container">
- <s:if test="sessionAudit!= null">
-
-
-
+    <s:if test="sessionAudit!= null">
             <div class="termwrapper">
                 <s:iterator value="sessionAudit.hostSystemList">
                     <div id="run_cmd_<s:property value="id"/>" class="run_cmd_active run_cmd">
-
                         <h6 class="term-header"><s:property value="displayLabel"/></h6>
-
                         <div id="term" class="term">
                             <div id="output_<s:property value="id"/>" class="output">
                             <div class="terminal" >
                             </div>
                             </div>
-
-
-
                         </div>
-
-
-
                     </div>
                 </s:iterator>
             </div>
 </s:if>
-
-
 </div>
-
-
-
-
 </body>
 </html>

@@ -16,7 +16,6 @@
 package com.keybox.manage.util;
 
 import com.keybox.common.util.AppConfig;
-import com.keybox.manage.db.SessionAuditDB;
 import com.keybox.manage.model.SessionOutput;
 import com.keybox.manage.model.UserSessionsOutput;
 import org.apache.commons.lang3.StringUtils;
@@ -130,10 +129,6 @@ public class SessionOutputUtil {
 
                         if (StringUtils.isNotEmpty(sessionOutput.getOutput())) {
                             outputList.add(sessionOutput);
-
-                            if ("true".equals(enableAudit)) {
-                                SessionAuditDB.insertTerminalLog(con, sessionOutput);
-                            }
 
                             userSessionsOutput.getSessionOutputMap().put(key, new StringBuilder());
                         }

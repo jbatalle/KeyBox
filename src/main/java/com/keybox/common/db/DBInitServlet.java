@@ -127,10 +127,6 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
             //delete ssh keys
             SSHUtil.deletePvtGenSSHKey();
 
-
-
-
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
