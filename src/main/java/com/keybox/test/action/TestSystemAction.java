@@ -15,7 +15,6 @@
  */
 package com.keybox.test.action;
 
-import com.keybox.manage.action.*;
 import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.ProfileDB;
 import com.keybox.manage.db.ScriptDB;
@@ -34,6 +33,7 @@ import java.util.List;
 
 /**
  * Action to manage systems
+ * Josep Batallé (josep.batalle@i2cat.net)
  */
 public class TestSystemAction extends ActionSupport implements ServletRequestAware {
 

@@ -15,6 +15,7 @@
  */
 package com.keybox.manage.action;
 
+import com.keybox.test.action.TestSecureShellAction;
 import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.SystemStatusDB;
 import com.keybox.manage.model.SchSession;
@@ -104,7 +105,7 @@ public class UploadAndPushAction extends ActionSupport implements ServletRequest
             pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
             if (pendingSystemStatus != null) {
                 //get session for system
-                SchSession session = SecureShellAction.getUserSchSessionMap().get(sessionId).getSchSessionMap().get(pendingSystemStatus.getId());
+                SchSession session = TestSecureShellAction.getUserSchSessionMap().get(sessionId).getSchSessionMap().get(pendingSystemStatus.getId());
                 //push upload to system
                 currentSystemStatus = SSHUtil.pushUpload(pendingSystemStatus, session.getSession(), UPLOAD_PATH + "/" + uploadFileName, pushDir + "/" + uploadFileName);
 

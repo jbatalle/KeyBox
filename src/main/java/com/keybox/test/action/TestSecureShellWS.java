@@ -19,7 +19,7 @@ import com.keybox.manage.socket.*;
 import com.google.gson.Gson;
 import com.keybox.common.util.AppConfig;
 import com.keybox.common.util.AuthUtil;
-import com.keybox.manage.action.SecureShellAction;
+import com.keybox.test.action.TestSecureShellAction;
 import com.keybox.manage.model.SchSession;
 import com.keybox.manage.model.UserSchSessions;
 import com.keybox.manage.task.SentOutputTask;
@@ -36,6 +36,7 @@ import java.util.Map;
 
 /**
  * class to run commands and start thread to send web socket terminal output
+ * Josep Batallé (josep.batalle@i2cat.net)
  */
 @ServerEndpoint(value = "/test/terms.ws", configurator = GetHttpSessionConfigurator.class)
 @SuppressWarnings("unchecked")
@@ -90,7 +91,7 @@ public class TestSecureShellWS {
 
 
                     //get servletRequest.getSession() for user
-                    UserSchSessions userSchSessions = SecureShellAction.getUserSchSessionMap().get(sessionId);
+                    UserSchSessions userSchSessions = TestSecureShellAction.getUserSchSessionMap().get(sessionId);
                     if (userSchSessions != null) {
                         SchSession schSession = userSchSessions.getSchSessionMap().get(id);
                         if (keyCode != null) {
@@ -120,8 +121,8 @@ public class TestSecureShellWS {
     @OnClose
     public void onClose() {
 
-        if (SecureShellAction.getUserSchSessionMap() != null) {
-            UserSchSessions userSchSessions = SecureShellAction.getUserSchSessionMap().get(sessionId);
+        if (TestSecureShellAction.getUserSchSessionMap() != null) {
+            UserSchSessions userSchSessions = TestSecureShellAction.getUserSchSessionMap().get(sessionId);
             if (userSchSessions != null) {
                 Map<Long, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
 
@@ -145,7 +146,7 @@ public class TestSecureShellWS {
 
                 //clear and remove session map for user
                 schSessionMap.clear();
-                SecureShellAction.getUserSchSessionMap().remove(sessionId);
+                TestSecureShellAction.getUserSchSessionMap().remove(sessionId);
                 SessionOutputUtil.removeUserSession(sessionId);
             }
         }

@@ -15,7 +15,6 @@
  */
 package com.keybox.test.action;
 
-import com.keybox.manage.action.*;
 import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.*;
 import com.keybox.manage.model.*;
@@ -35,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This action will create composite ssh terminals to be used
+ * Josep Batallé (josep.batalle@i2cat.net)
  */
 public class TestSecureShellAction extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 
