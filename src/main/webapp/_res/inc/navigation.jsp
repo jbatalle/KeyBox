@@ -44,13 +44,7 @@
                         <ul class="dropdown-menu">
 
 
-                            <li><a href="../manage/viewSystems.action">Systems</a></li>
-
-
-                            <li><a href="../manage/viewProfiles.action">Profiles</a></li>
-
-
-                            <li><a href="../manage/viewUsers.action">Users</a></li>
+                            <li><a href="../test_m/viewSystems.action">Systems</a></li>
 
                             <li class="divider"></li>
 
@@ -68,23 +62,12 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Secure Shell <b class="caret"></b></a>
                     <ul class="dropdown-menu">
 
-                        <li><a href="../admin/viewSystems.action">Composite SSH Terms</a></li>
-                        <li><a href="../admin/viewScripts.action">Composite Scripts</a></li>
+                        <li><a href="../test/viewSystems.action">Composite SSH Terms</a></li>
+                        <li><a href="../test/viewScripts.action">Composite Scripts</a></li>
 
 
                     </ul>
                 </li>
-
-
-                <s:if test="%{#session.userType==\"M\"}">
-
-                    <li><a href="../manage/viewSessions.action">Audit Sessions</a></li>
-
-                </s:if>
-
-                <li><a href="../admin/setPassword.action">Change Password</a></li>
-
-                <li><a href="../logout.action">Logout</a></li>
             </ul>
         </div>
         <!--/.nav-collapse -->

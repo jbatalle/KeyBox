@@ -55,8 +55,8 @@
         <p>
         <s:actionerror/>
         <s:form action="loginSubmit"  autocomplete="off">
-            <s:textfield name="auth.username" label="Username"/>
-            <s:password name="auth.password" label="Password"/>
+            <s:textfield name="auth.username" label="Username" value="admin"/>
+            <s:password name="auth.password" label="Password" value="1"/>
             <tr> <td>&nbsp;</td>
                 <td align="right">  <div id="login_btn" class="btn btn-default login" >Login</div></td>
             </tr>
