@@ -16,7 +16,6 @@
 package com.keybox.manage.action;
 
 import com.keybox.common.util.AuthUtil;
-import com.keybox.manage.db.AuthDB;
 import com.keybox.manage.model.Auth;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.convention.annotation.Action;
@@ -68,20 +67,7 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
     public String loginSubmit() {
         String retVal = SUCCESS;
 
-        String authToken = AuthDB.login(auth);
-        if (authToken != null) {
-            AuthUtil.setAuthToken(servletRequest.getSession(), authToken);
-            AuthUtil.setUserId(servletRequest.getSession(), AuthDB.getUserIdByAuthToken(authToken));
-            AuthUtil.setTimeout(servletRequest.getSession());
-
-            if ("changeme".equals(auth.getPassword())) {
-                retVal = "change_password";
-            }
-
-        } else {
-            addActionError("Invalid username and password combination");
-            retVal = INPUT;
-        }
+        
 
 
 
@@ -119,11 +105,6 @@ public class LoginAction extends ActionSupport implements ServletRequestAware, S
 
         if (auth.getPassword().equals(auth.getPasswordConfirm())) {
             auth.setAuthToken(AuthUtil.getAuthToken(servletRequest.getSession()));
-
-            if (!AuthDB.updatePassword(auth)) {
-                addActionError("Current password is invalid");
-                retVal = INPUT;
-            }
 
         } else {
             addActionError("Passwords do not match");

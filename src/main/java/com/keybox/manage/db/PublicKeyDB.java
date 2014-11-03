@@ -66,7 +66,6 @@ public class PublicKeyDB {
                 publicKey.setId(rs.getLong("id"));
                 publicKey.setKeyNm(rs.getString("key_nm"));
                 publicKey.setPublicKey(rs.getString("public_key"));
-                publicKey.setProfile(ProfileDB.getProfile(con, rs.getLong("profile_id")));
                 publicKeysList.add(publicKey);
 
             }
@@ -126,7 +125,6 @@ public class PublicKeyDB {
                 publicKey.setId(rs.getLong("id"));
                 publicKey.setKeyNm(rs.getString("key_nm"));
                 publicKey.setPublicKey(rs.getString("public_key"));
-                publicKey.setProfile(ProfileDB.getProfile(con, rs.getLong("profile_id")));
             }
             DBUtils.closeRs(rs);
             DBUtils.closeStmt(stmt);
@@ -152,11 +150,7 @@ public class PublicKeyDB {
             PreparedStatement stmt = con.prepareStatement("insert into public_keys(key_nm, public_key, profile_id) values (?,?,?)");
             stmt.setString(1, publicKey.getKeyNm());
             stmt.setString(2, publicKey.getPublicKey());
-            if (publicKey.getProfile() == null || publicKey.getProfile().getId() == null) {
-                stmt.setNull(3, Types.NULL);
-            } else {
-                stmt.setLong(3, publicKey.getProfile().getId());
-            }
+            
             stmt.execute();
 
             DBUtils.closeStmt(stmt);
@@ -182,11 +176,7 @@ public class PublicKeyDB {
             PreparedStatement stmt = con.prepareStatement("update public_keys set key_nm=?, public_key=?, profile_id=? where id=?");
             stmt.setString(1, publicKey.getKeyNm());
             stmt.setString(2, publicKey.getPublicKey());
-            if (publicKey.getProfile() == null || publicKey.getProfile().getId() == null) {
-                stmt.setNull(3, Types.NULL);
-            } else {
-                stmt.setLong(3, publicKey.getProfile().getId());
-            }
+           
             stmt.setLong(4, publicKey.getId());
             stmt.execute();
             DBUtils.closeStmt(stmt);
@@ -255,13 +245,7 @@ public class PublicKeyDB {
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
                     Long profileId = rs.getLong("profile_id");
-                    if (profileId != null) {
-                        systemIdList.addAll(ProfileSystemsDB.getSystemIdsByProfile(con, publicKeyId));
-                    }
-                    else {
-                        systemIdList.addAll(SystemDB.getAllSystemIds(con));
-                        break;
-                    }
+               
                 }
                 DBUtils.closeStmt(stmt);
 

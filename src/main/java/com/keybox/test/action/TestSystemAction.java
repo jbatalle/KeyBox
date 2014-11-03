@@ -16,7 +16,6 @@
 package com.keybox.test.action;
 
 import com.keybox.common.util.AuthUtil;
-import com.keybox.manage.db.ProfileDB;
 import com.keybox.manage.db.ScriptDB;
 import com.keybox.manage.db.SystemDB;
 import com.keybox.manage.model.*;
@@ -42,7 +41,6 @@ public class TestSystemAction extends ActionSupport implements ServletRequestAwa
     HttpServletRequest servletRequest;
     String password;
     String passphrase;
-    List<Profile> profileList= new ArrayList<>();
 
 
     @Action(value = "/test/viewSystems",
@@ -55,7 +53,6 @@ public class TestSystemAction extends ActionSupport implements ServletRequestAwa
 
         if (Auth.MANAGER.equals(AuthUtil.getUserType(servletRequest.getSession()))) {
             sortedSet = SystemDB.getSystemSet(sortedSet);
-            profileList=ProfileDB.getAllProfiles();
         } else {
             sortedSet = SystemDB.getUserSystemSet(sortedSet, userId);
 //            profileList= UserProfileDB.getProfilesByUser(userId);
@@ -155,16 +152,6 @@ public class TestSystemAction extends ActionSupport implements ServletRequestAwa
             sortedSet = SystemDB.getSystemSet(sortedSet);
         }
 
-    }
-
-   
-
-    public List<Profile> getProfileList() {
-        return profileList;
-    }
-
-    public void setProfileList(List<Profile> profileList) {
-        this.profileList = profileList;
     }
 
     public HostSystem getHostSystem() {

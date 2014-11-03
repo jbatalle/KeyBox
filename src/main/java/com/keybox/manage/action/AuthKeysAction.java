@@ -18,7 +18,6 @@ package com.keybox.manage.action;
 import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.*;
 import com.keybox.manage.model.HostSystem;
-import com.keybox.manage.model.Profile;
 import com.keybox.manage.model.PublicKey;
 import com.keybox.manage.model.SortedSet;
 import com.keybox.manage.util.SSHUtil;
@@ -39,7 +38,6 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
 
 
     HttpServletRequest servletRequest;
-    List<Profile> profileList;
     PublicKey publicKey;
     SortedSet sortedSet = new SortedSet();
     List<Long> systemSelectId;
@@ -57,7 +55,6 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
     )
     public String viewKeys() {
 
-        profileList = ProfileDB.getAllProfiles();
         sortedSet = PublicKeyDB.getPublicKeySet(sortedSet);
         return SUCCESS;
     }
@@ -102,7 +99,7 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
     )
     public String distributeKeysByProfile() {
 
-        profileList = ProfileDB.getAllProfiles();
+        
         return SUCCESS;
     }
 
@@ -128,15 +125,12 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
         List<HostSystem> hostSystemList = new ArrayList<HostSystem>();
         //get all host systems if no profile
-        if (publicKey.getProfile() != null && publicKey.getProfile().getId() != null) {
-            hostSystemList = ProfileSystemsDB.getSystemsByProfile(publicKey.getProfile().getId());
-            //get host system for profile
-        } else {
+        
             sortedSet = SystemDB.getSystemSet(new SortedSet());
             if (sortedSet != null && sortedSet.getItemList() != null) {
                 hostSystemList = (ArrayList<HostSystem>) sortedSet.getItemList();
             }
-        }
+     
         if (!hostSystemList.isEmpty()) {
 
             SystemStatusDB.setInitialSystemStatusByHostSystem(hostSystemList, userId);
@@ -282,7 +276,6 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
 
         if (!this.getFieldErrors().isEmpty()) {
 
-            profileList = ProfileDB.getAllProfiles();
             sortedSet = PublicKeyDB.getPublicKeySet(sortedSet);
         }
 
@@ -295,14 +288,6 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
 
     public void setServletRequest(HttpServletRequest servletRequest) {
         this.servletRequest = servletRequest;
-    }
-
-    public List<Profile> getProfileList() {
-        return profileList;
-    }
-
-    public void setProfileList(List<Profile> profileList) {
-        this.profileList = profileList;
     }
 
     public PublicKey getPublicKey() {

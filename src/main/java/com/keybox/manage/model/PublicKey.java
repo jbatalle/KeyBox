@@ -22,7 +22,6 @@ public class PublicKey {
     Long id;
     String keyNm;
     String publicKey;
-    Profile profile;
 
 
     public String getKeyNm() {
@@ -49,11 +48,4 @@ public class PublicKey {
         this.id = id;
     }
 
-    public Profile getProfile() {
-        return profile;
-    }
-
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
 }

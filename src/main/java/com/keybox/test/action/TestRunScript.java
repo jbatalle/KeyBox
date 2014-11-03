@@ -18,7 +18,7 @@ import com.keybox.manage.db.SystemDB;
 import com.keybox.manage.db.SystemStatusDB;
 import com.keybox.manage.model.ApplicationKey;
 import com.keybox.manage.model.HostSystem;
-import com.keybox.manage.model.Profile;
+
 import com.keybox.manage.model.SchSession;
 import com.keybox.manage.model.Script;
 import com.keybox.manage.model.SessionOutput;
@@ -71,7 +71,6 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
     SortedSet sortedSet = new SortedSet();
     HostSystem hostSystem = new HostSystem();
     Script script = null;
-    List<Profile> profileList = new ArrayList<>();
     static Map<Long, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<Long, UserSchSessions>();
 
     /**
