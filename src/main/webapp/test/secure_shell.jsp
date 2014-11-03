@@ -79,12 +79,10 @@ $(document).ready(function () {
 
         drop: function (event, ui) {
             var id = ui.draggable.attr("id").replace("run_cmd_", "");
-            $.ajax({ url: '../admin/disconnectTerm.action?id=' + id, cache: false});
+            $.ajax({ url: '../test/disconnectTerm.action?id=' + id, cache: false});
             ui.draggable.remove();
-
         }
     });
-
 
     //submit add or edit form
     $(".submit_btn").button().click(function () {
@@ -124,7 +122,6 @@ $(document).ready(function () {
 
     $('#upload_push').click(function () {
 
-
         //get id list from selected terminals
         var ids = [];
         $(".run_cmd_active").each(function (index) {
@@ -160,11 +157,6 @@ $(document).ready(function () {
     </s:else>
     </s:elseif>
 
-
-
-
-
-
     <s:if test="pendingSystemStatus==null">
 
     $('#dummy').focus();
@@ -182,7 +174,6 @@ $(document).ready(function () {
     $(".output").mouseover().mousedown(function () {
         termFocus = false;
     });
-
 
     $(document).keypress(function (e) {
         if (termFocus) {
@@ -305,7 +296,6 @@ $(document).ready(function () {
                 termMap[val.hostSystemId].write(val.output);
             }
         });
-
     };
 
     $('#match_btn').unbind().click(function () {
@@ -365,23 +355,14 @@ $(document).ready(function () {
                         $('#run_cmd_' + termId).fadeTo(100, .5).fadeTo(100, 1);
                     }
                 }
-
-
             }, 5000);
-
-
         } else {
             $('#match_btn').switchClass('btn-danger', 'btn-success', 0);
             $('#match_btn').text("Start");
             clearInterval(matchFunction)
         }
-
     }
-
-
     </s:if>
-
-
 });
 
 
@@ -428,7 +409,6 @@ $(document).ready(function () {
             <div class="collapse navbar-collapse">
                 <s:if test="pendingSystemStatus==null">
 
-
                     <ul class="nav navbar-nav">
                         <li><a id="select_all" href="#"
                                title="Use CMD-Click or CTRL-Click to select multiple individual terminals">Select
@@ -455,46 +435,30 @@ $(document).ready(function () {
                             <div id="match_btn" class="btn btn-success">Start</div>
                         </s:form>
                     </div>
-
                     <div class="clear"></div>
                 </s:if>
             </div>
             <!--/.nav-collapse -->
         </div>
-
-
     </div>
 
     <div class="term-container container">
-
-
         <div class="termwrapper">
-
-
             <s:iterator value="systemList">
                 <div id="run_cmd_<s:property value="id"/>" class="run_cmd_active run_cmd">
-
                     <h6 class="term-header"><s:property value="displayLabel"/></h6>
-
 
                     <div class="term">
                         <div id="output_<s:property value="id"/>" class="output"></div>
                     </div>
-
                 </div>
             </s:iterator>
 
-
             <div id="upload_push_dialog" title="Upload &amp; Push">
                 <iframe id="upload_push_frame" width="700px" height="300px" style="border: none;">
-
                 </iframe>
-
-
             </div>
-
         </div>
-
     </div>
 </s:if>
 <s:else>
@@ -509,9 +473,7 @@ $(document).ready(function () {
 
 <div id="set_password_dialog" title="Enter Password">
     <p class="error"><s:property value="pendingSystemStatus.errorMsg"/></p>
-
     <p>Enter password for <s:property value="pendingSystemStatus.displayLabel"/>
-
     </p>
     <s:form id="password_frm" action="createTerms">
         <s:hidden name="pendingSystemStatus.id"/>

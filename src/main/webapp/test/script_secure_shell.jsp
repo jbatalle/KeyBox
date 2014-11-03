@@ -79,7 +79,7 @@ $(document).ready(function () {
 
         drop: function (event, ui) {
             var id = ui.draggable.attr("id").replace("run_cmd_", "");
-            $.ajax({ url: '../admin/disconnectTerm.action?id=' + id, cache: false});
+            $.ajax({ url: '../test/disconnectTerm.action?id=' + id, cache: false});
             ui.draggable.remove();
 
         }
@@ -123,8 +123,6 @@ $(document).ready(function () {
 
 
     $('#upload_push').click(function () {
-
-
         //get id list from selected terminals
         var ids = [];
         $(".run_cmd_active").each(function (index) {
@@ -160,16 +158,10 @@ $(document).ready(function () {
     </s:else>
     </s:elseif>
 
-
-
-
-
-
     <s:if test="pendingSystemStatus==null">
 
     $('#dummy').focus();
     var keys = {};
-
 
     var termFocus = true;
     $("#match").focus(function () {
@@ -182,7 +174,6 @@ $(document).ready(function () {
     $(".output").mouseover().mousedown(function () {
         termFocus = false;
     });
-
 
     $(document).keypress(function (e) {
         if (termFocus) {
@@ -255,7 +246,6 @@ $(document).ready(function () {
         }
     });
 
-
     //get cmd text from paste
     $("#dummy").bind('paste', function (e) {
         $('#dummy').focus();
@@ -271,15 +261,12 @@ $(document).ready(function () {
         }, 100);
     });
 
-
     var termMap = {};
-
     $(".output").each(function (index) {
         var id = $(this).attr("id").replace("output_", "");
         termMap[id] = new Terminal(80, 24);
         termMap[id].open($(this));
     });
-
 
     var loc = window.location, ws_uri;
     if (loc.protocol === "https:") {
@@ -290,7 +277,6 @@ $(document).ready(function () {
     ws_uri += "//" + loc.host + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
 
     var connection = new WebSocket(ws_uri);
-
 
     // Log errors
     connection.onerror = function (error) {
@@ -352,11 +338,9 @@ $(document).ready(function () {
                     }
                 });
 
-
                 var sorted = termMap.slice(0).sort(function (a, b) {
                     return a.no_matches - b.no_matches;
                 });
-
 
                 for (var i = 0; i < sorted.length; ++i) {
                     var termId = sorted[i].id;
@@ -365,23 +349,14 @@ $(document).ready(function () {
                         $('#run_cmd_' + termId).fadeTo(100, .5).fadeTo(100, 1);
                     }
                 }
-
-
             }, 5000);
-
-
         } else {
             $('#match_btn').switchClass('btn-danger', 'btn-success', 0);
             $('#match_btn').text("Start");
             clearInterval(matchFunction)
         }
-
     }
-
-
     </s:if>
-
-
 });
 
 
@@ -424,22 +399,17 @@ $(document).ready(function () {
         </div>
     </div>
 -->
-systemList
-${systemList}
-<s:iterator value="systemList">
-                <div id="run_cmd_<s:property value="id"/>" class="run_cmd_active run_cmd">
 
-                    <h6 class="term-header"><s:property value="displayLabel"/></h6>
-
-
-                    <div class="term">
-                        <div id="output_<s:property value="id"/>" class="output"></div>
-                    </div>
-
-                </div>
-            </s:iterator>
+    <s:iterator value="systemList">
+        <div id="run_cmd_<s:property value="id"/>" class="run_cmd_active run_cmd">
+            <h6 class="term-header"><s:property value="displayLabel"/></h6>
+            <div class="term">
+                <div id="output_<s:property value="id"/>" class="output"></div>
+            </div>
+        </div>
+    </s:iterator>
     
-
+    
 <div id="set_password_dialog" title="Enter Password">
     <p class="error"><s:property value="pendingSystemStatus.errorMsg"/></p>
 

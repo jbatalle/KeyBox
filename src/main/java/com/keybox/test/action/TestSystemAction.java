@@ -82,7 +82,7 @@ public class TestSystemAction extends ActionSupport implements ServletRequestAwa
     @Action(value = "/test_m/saveSystem",
             results = {
                     @Result(name = "input", location = "/test/view_systems_manage.jsp"),
-                    @Result(name = "success", location = "/test/viewSystems.action?sortedSet.orderByDirection=${sortedSet.orderByDirection}&sortedSet.orderByField=${sortedSet.orderByField}", type = "redirect")
+                    @Result(name = "success", location = "/test/view_systems_manage.action?sortedSet.orderByDirection=${sortedSet.orderByDirection}&sortedSet.orderByField=${sortedSet.orderByField}", type = "redirect")
             }
     )
     public String saveSystem() {
@@ -107,7 +107,7 @@ public class TestSystemAction extends ActionSupport implements ServletRequestAwa
 
     @Action(value = "/test_m/deleteSystem",
             results = {
-                    @Result(name = "success", location = "/test/viewSystems.action?sortedSet.orderByDirection=${sortedSet.orderByDirection}&sortedSet.orderByField=${sortedSet.orderByField}", type = "redirect")
+                    @Result(name = "success", location = "/test/view_systems_manage.action?sortedSet.orderByDirection=${sortedSet.orderByDirection}&sortedSet.orderByField=${sortedSet.orderByField}", type = "redirect")
             }
     )
     public String deleteSystem() {

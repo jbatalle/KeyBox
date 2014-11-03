@@ -35,10 +35,13 @@ public class SecureShellTask implements Runnable {
     }
 
     public void run() {
+        System.out.println("Run Secure Shell Task");
         InputStreamReader isr = new InputStreamReader(outFromChannel);
         BufferedReader br = new BufferedReader(isr);
         try {
+            System.out.println("Before PUT");
             SessionOutputUtil.addOutput(sessionOutput.getSessionId(), sessionOutput);
+            System.out.println("After PUT");
             char[] buff = new char[1024];
             int read;
             while((read = br.read(buff)) != -1) {

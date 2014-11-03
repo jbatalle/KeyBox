@@ -65,11 +65,13 @@ public class TestSecureShellAction extends ActionSupport implements ServletReque
             }
     )
     public String createTerms() {
-
+System.out.println("Create Terms function");
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
         Long sessionId = AuthUtil.getSessionId(servletRequest.getSession());
+        System.out.println(sessionId);
+        System.out.println(pendingSystemStatus);
         if (pendingSystemStatus != null && pendingSystemStatus.getId() != null) {
-
+System.out.println("Create Terms inside if");
 
             //get status
             currentSystemStatus = SystemStatusDB.getSystemStatus(pendingSystemStatus.getId(), userId);
@@ -119,6 +121,7 @@ public class TestSecureShellAction extends ActionSupport implements ServletReque
             }
     )
     public String getNextPendingSystemForTerms() {
+System.out.println("getNextPending");        
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
         currentSystemStatus = SystemStatusDB.getSystemStatus(pendingSystemStatus.getId(), userId);
         currentSystemStatus.setErrorMsg("Auth fail");
@@ -158,7 +161,7 @@ public class TestSecureShellAction extends ActionSupport implements ServletReque
             SystemStatusDB.setInitialSystemStatus(systemSelectId, userId);
             pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
 
-//            AuthUtil.setSessionId(servletRequest.getSession(), SessionAuditDB.createSessionLog(userId));
+            AuthUtil.setSessionId(servletRequest.getSession(), SessionAuditDB.createSessionLog(userId));
 
 
         }

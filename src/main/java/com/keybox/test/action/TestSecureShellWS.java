@@ -1,17 +1,17 @@
 /**
  * Copyright 2013 Sean Kavanagh - sean.p.kavanagh6@gmail.com
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.keybox.test.action;
 
@@ -19,10 +19,10 @@ import com.keybox.manage.socket.*;
 import com.google.gson.Gson;
 import com.keybox.common.util.AppConfig;
 import com.keybox.common.util.AuthUtil;
-import com.keybox.test.action.TestSecureShellAction;
 import com.keybox.manage.model.SchSession;
 import com.keybox.manage.model.UserSchSessions;
 import com.keybox.manage.task.SentOutputTask;
+import com.keybox.manage.util.EncryptionUtil;
 import com.keybox.manage.util.SessionOutputUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,19 +41,17 @@ import java.util.Map;
 @ServerEndpoint(value = "/test/terms.ws", configurator = GetHttpSessionConfigurator.class)
 @SuppressWarnings("unchecked")
 public class TestSecureShellWS {
+
     private HttpSession httpSession;
     private Session session;
     private Long sessionId = null;
 
-
-
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-
-
+        System.out.println("TestSecureSHellWS. On Open. Session: " + session.getId());
         //set websocket timeout
-        if(StringUtils.isNotEmpty(AppConfig.getProperty("websocketTimeout"))){
-            session.setMaxIdleTimeout( Long.parseLong(AppConfig.getProperty("websocketTimeout"))* 60000);
+        if (StringUtils.isNotEmpty(AppConfig.getProperty("websocketTimeout"))) {
+            session.setMaxIdleTimeout(Long.parseLong(AppConfig.getProperty("websocketTimeout")) * 60000);
         } else {
             session.setMaxIdleTimeout(0);
         }
@@ -61,8 +59,18 @@ public class TestSecureShellWS {
         this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         this.sessionId = AuthUtil.getSessionId(httpSession);
         this.session = session;
-System.out.println("TestSecureShellWS - sesionId :"+sessionId);
-        Runnable run=new SentOutputTask(sessionId, session);
+
+        System.out.println("TestSecureShellWS - HttpSessionId :" + this.sessionId);
+        System.out.println("TestSecureShellWS - sesionId :" + session.getId());
+        Long t = (long) 1;
+        Object o = EncryptionUtil.encrypt(t.toString());
+        String sessionIdStr = EncryptionUtil.decrypt((String) o);
+        if (sessionIdStr != null && !sessionIdStr.trim().equals("")) {
+            sessionId = Long.parseLong(sessionIdStr);
+        }
+
+        System.out.println("TestSecureShellWS - sesionId :" + sessionId);
+        Runnable run = new SentOutputTask(sessionId, session);
         Thread thread = new Thread(run);
         thread.start();
 
@@ -70,11 +78,13 @@ System.out.println("TestSecureShellWS - sesionId :"+sessionId);
 
     @OnMessage
     public void onMessage(String message) {
-
+       
+        System.out.println("SessionId" + sessionId);
+        if(sessionId == 0) sessionId = (long) 1;
+        System.out.println("OnMessage" + message);
         if (session.isOpen()) {
 
             if (StringUtils.isNotEmpty(message)) {
-
 
                 Map jsonRoot = new Gson().fromJson(message, Map.class);
 
@@ -85,18 +95,21 @@ System.out.println("TestSecureShellWS - sesionId :"+sessionId);
                 if (keyCodeDbl != null) {
                     keyCode = keyCodeDbl.intValue();
                 }
-
+System.out.println("Before for");
                 for (String idStr : (ArrayList<String>) jsonRoot.get("id")) {
                     Long id = Long.parseLong(idStr);
-
-
+System.out.println("Prev Id: "+id);
                     //get servletRequest.getSession() for user
-                    UserSchSessions userSchSessions = TestSecureShellAction.getUserSchSessionMap().get(sessionId);
+                    System.out.println("Entra en user?");
+                    UserSchSessions userSchSessions = TestRunScript.getUserSchSessionMap().get(sessionId);
                     if (userSchSessions != null) {
+                        System.out.println("Entra?");
                         SchSession schSession = userSchSessions.getSchSessionMap().get(id);
+                        System.out.println("USer Id sschSession: "+schSession.getUserId());
                         if (keyCode != null) {
                             if (keyMap.containsKey(keyCode)) {
                                 try {
+                                    System.out.println("Entra? yes");
                                     schSession.getCommander().write(keyMap.get(keyCode));
                                 } catch (IOException ex) {
                                     ex.printStackTrace();
@@ -110,12 +123,8 @@ System.out.println("TestSecureShellWS - sesionId :"+sessionId);
                 }
                 //update timeout
                 AuthUtil.setTimeout(httpSession);
-
-
             }
         }
-
-
     }
 
     @OnClose
@@ -143,7 +152,6 @@ System.out.println("TestSecureShellWS - sesionId :"+sessionId);
                     schSessionMap.remove(sessionKey);
                 }
 
-
                 //clear and remove session map for user
                 schSessionMap.clear();
                 TestSecureShellAction.getUserSchSessionMap().remove(sessionId);
@@ -151,9 +159,7 @@ System.out.println("TestSecureShellWS - sesionId :"+sessionId);
             }
         }
 
-
     }
-
 
     /**
      * Maps key press events to the ascii values
