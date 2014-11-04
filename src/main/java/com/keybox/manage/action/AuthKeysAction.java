@@ -20,7 +20,6 @@ import com.keybox.manage.db.*;
 import com.keybox.manage.model.HostSystem;
 import com.keybox.manage.model.PublicKey;
 import com.keybox.manage.model.SortedSet;
-import com.keybox.manage.util.SSHUtil;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -110,7 +109,7 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
     )
     public String distributeKeysBySystem() {
 
-        sortedSet = SystemDB.getSystemSet(sortedSet);
+//        sortedSet = SystemDB.getSystemSet(sortedSet);
         return SUCCESS;
     }
 
@@ -126,24 +125,11 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
         List<HostSystem> hostSystemList = new ArrayList<HostSystem>();
         //get all host systems if no profile
         
-            sortedSet = SystemDB.getSystemSet(new SortedSet());
+/*            sortedSet = SystemDB.getSystemSet(new SortedSet());
             if (sortedSet != null && sortedSet.getItemList() != null) {
                 hostSystemList = (ArrayList<HostSystem>) sortedSet.getItemList();
             }
-     
-        if (!hostSystemList.isEmpty()) {
-
-            SystemStatusDB.setInitialSystemStatusByHostSystem(hostSystemList, userId);
-            //set first system to set auth keys
-            pendingSystem = SystemStatusDB.getNextPendingSystem(userId);
-
-            if (pendingSystem != null) {
-                pendingSystem.setStatusCd(HostSystem.PUBLIC_KEY_FAIL_STATUS);
-            }
-        }
-        sortedSet = SystemStatusDB.getSortedSetStatus(userId);
-
-
+*/   
         return SUCCESS;
     }
 
@@ -159,19 +145,11 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
 
         if (systemSelectId != null && !systemSelectId.isEmpty()) {
 
-            SystemStatusDB.setInitialSystemStatus(systemSelectId, userId);
-            //set first system to set auth keys
-            pendingSystem = SystemStatusDB.getNextPendingSystem(userId);
-
-            if (pendingSystem != null) {
-                pendingSystem.setStatusCd(HostSystem.PUBLIC_KEY_FAIL_STATUS);
-            }
-
 
         }
 
 
-        sortedSet = SystemStatusDB.getSortedSetStatus(userId);
+
         return SUCCESS;
     }
 
@@ -182,40 +160,7 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
     )
     public String genAuthKeyForSystem() {
 
-        Long userId = AuthUtil.getUserId(servletRequest.getSession());
-
-        if (pendingSystem != null && pendingSystem.getId() != null) {
-
-            //get key gen status and set current system
-            hostSystem = SystemStatusDB.getSystemStatus(pendingSystem.getId(), userId);
-
-
-
-            //try and sftp key to remote server
-            hostSystem = SSHUtil.authAndAddPubKey(hostSystem, passphrase, password, true);
-
-            SystemStatusDB.updateSystemStatus(hostSystem, userId);
-            SystemDB.updateSystem(hostSystem);
-
-            if (HostSystem.AUTH_FAIL_STATUS.equals(hostSystem.getStatusCd()) || HostSystem.PUBLIC_KEY_FAIL_STATUS.equals(hostSystem.getStatusCd())) {
-                pendingSystem = hostSystem;
-
-            } else {
-                pendingSystem = SystemStatusDB.getNextPendingSystem(userId);
-
-
-                //if success loop through systems until finished or need password
-                while (pendingSystem != null && hostSystem != null && HostSystem.SUCCESS_STATUS.equals(hostSystem.getStatusCd())) {
-                    hostSystem = SSHUtil.authAndAddPubKey(pendingSystem, passphrase, password, true);
-
-                    SystemStatusDB.updateSystemStatus(hostSystem, userId);
-                    SystemDB.updateSystem(hostSystem);
-
-                    pendingSystem = SystemStatusDB.getNextPendingSystem(userId);
-                }
-            }
-
-        }
+        
 
         //finished - no more pending systems
         if(pendingSystem==null) {
@@ -223,9 +168,6 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
         }
 
 
-
-
-        sortedSet = SystemStatusDB.getSortedSetStatus(userId);
 
         return SUCCESS;
     }
@@ -240,18 +182,7 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
 
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
 
-        pendingSystem = SystemStatusDB.getSystemStatus(pendingSystem.getId(), userId);
-        pendingSystem.setErrorMsg("Auth fail");
-        pendingSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
-
-
-        SystemStatusDB.updateSystemStatus(pendingSystem, userId);
-        SystemDB.updateSystem(pendingSystem);
-
-
-        pendingSystem = SystemStatusDB.getNextPendingSystem(userId);
-
-        sortedSet = SystemStatusDB.getSortedSetStatus(userId);
+       
 
         return SUCCESS;
     }

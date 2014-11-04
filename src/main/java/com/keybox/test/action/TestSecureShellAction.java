@@ -18,7 +18,6 @@ package com.keybox.test.action;
 import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.*;
 import com.keybox.manage.model.*;
-import com.keybox.manage.util.SSHUtil;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -27,8 +26,6 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -69,42 +66,12 @@ System.out.println("Create Terms function");
         if (pendingSystemStatus != null && pendingSystemStatus.getId() != null) {
 System.out.println("Create Terms inside if");
 
-            //get status
-            currentSystemStatus = SystemStatusDB.getSystemStatus(pendingSystemStatus.getId(), userId);
-            //if initial status run script
-            if (currentSystemStatus != null
-                    && (HostSystem.INITIAL_STATUS.equals(currentSystemStatus.getStatusCd())
-                    || HostSystem.AUTH_FAIL_STATUS.equals(currentSystemStatus.getStatusCd())
-                    || HostSystem.PUBLIC_KEY_FAIL_STATUS.equals(currentSystemStatus.getStatusCd()))
-                    ) {
-
-                //set current session
-                currentSystemStatus = SSHUtil.openSSHTermOnSystem(passphrase, password, userId, sessionId, currentSystemStatus, userSchSessionMap);
-
-            }
-            if (currentSystemStatus != null
-                    && (HostSystem.AUTH_FAIL_STATUS.equals(currentSystemStatus.getStatusCd())
-                    || HostSystem.PUBLIC_KEY_FAIL_STATUS.equals(currentSystemStatus.getStatusCd()))) {
-
-                pendingSystemStatus = currentSystemStatus;
-
-            } else {
-
-                pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
-                //if success loop through systems until finished or need password
-                while (pendingSystemStatus != null && currentSystemStatus != null && HostSystem.SUCCESS_STATUS.equals(currentSystemStatus.getStatusCd())) {
-                    currentSystemStatus = SSHUtil.openSSHTermOnSystem(passphrase, password, userId, sessionId, pendingSystemStatus, userSchSessionMap);
-                    pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
-                }
-
-
-            }
-
+            
         }
         //set system list if no pending systems
-        if (SystemStatusDB.getNextPendingSystem(userId) == null) {
+//        if (SystemStatusDB.getNextPendingSystem(userId) == null) {
             setSystemList(userId, sessionId);
-        }
+//        }
 
 
         return SUCCESS;
@@ -119,16 +86,7 @@ System.out.println("Create Terms inside if");
     public String getNextPendingSystemForTerms() {
 System.out.println("getNextPending");        
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
-        currentSystemStatus = SystemStatusDB.getSystemStatus(pendingSystemStatus.getId(), userId);
-        currentSystemStatus.setErrorMsg("Auth fail");
-        currentSystemStatus.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
-
-
-        SystemStatusDB.updateSystemStatus(currentSystemStatus, userId);
-        SystemDB.updateSystem(currentSystemStatus);
-
-        pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
-
+        
         //set system list if no pending systems
         if (pendingSystemStatus == null) {
             setSystemList(userId, AuthUtil.getSessionId(servletRequest.getSession()));
@@ -151,12 +109,10 @@ System.out.println("getNextPending");
         if (systemSelectId != null && !systemSelectId.isEmpty()) {
             //check to see if user has perms to access selected systems
             if (!Auth.MANAGER.equals(AuthUtil.getUserType(servletRequest.getSession()))) {
-                systemSelectId = SystemDB.checkSystemPerms(systemSelectId, userId);
+//                systemSelectId = SystemDB.checkSystemPerms(systemSelectId, userId);
             }
 
-            SystemStatusDB.setInitialSystemStatus(systemSelectId, userId);
-            pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
-
+         
 //            AuthUtil.setSessionId(servletRequest.getSession(), SessionAuditDB.createSessionLog(userId));
 
 

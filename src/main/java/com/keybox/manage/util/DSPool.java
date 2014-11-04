@@ -26,24 +26,19 @@ public class DSPool {
 
     //system path to the H2 DB
     private static String DB_PATH = DBUtils.class.getClassLoader().getResource("keydb").getPath();
-
-
     private static PoolingDataSource dsPool;
-
 
     /**
      * fetches the data source for H2 db
      *
      * @return data source pool
      */
-
     public static org.apache.commons.dbcp.PoolingDataSource getDataSource() {
         if (dsPool == null) {
 
             dsPool = registerDataSource();
         }
         return dsPool;
-
     }
 
     /**
@@ -51,10 +46,7 @@ public class DSPool {
      *
      * @return pooling database object
      */
-
     private static PoolingDataSource registerDataSource() {
-
-
         // create a database connection
         String user = "keybox";
         String password = "filepwd 45WJLnwhpA47EepT162hrVnDn3vYRvJhpZi0sVdvN9Sdsf";
@@ -68,7 +60,6 @@ public class DSPool {
             ex.printStackTrace();
         }
 
-
         GenericObjectPool connectionPool = new GenericObjectPool(null);
 
         connectionPool.setMaxActive(25);
@@ -76,17 +67,10 @@ public class DSPool {
         connectionPool.setMinIdle(2);
         connectionPool.setMaxWait(15000);
         connectionPool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
-
-
         ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(connectionURI, user, password);
-
 
         new PoolableConnectionFactory(connectionFactory, connectionPool, null, validationQuery, false, true);
 
         return new PoolingDataSource(connectionPool);
-
     }
-
-
 }
-

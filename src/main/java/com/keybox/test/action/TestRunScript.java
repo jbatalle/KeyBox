@@ -13,7 +13,6 @@ import com.jcraft.jsch.Session;
 import com.keybox.common.util.AppConfig;
 import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.PrivateKeyDB;
-import com.keybox.manage.db.SystemStatusDB;
 import com.keybox.manage.model.ApplicationKey;
 import com.keybox.manage.model.HostSystem;
 
@@ -88,44 +87,10 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         }
         userId = (long) 1;
         System.out.println(pendingSystemStatus);
-/*
-        System.out.println(pendingSystemStatus);
-        if (pendingSystemStatus != null && pendingSystemStatus.getId() != null) {
-            System.out.println("Inside If");
-            //get status
-            currentSystemStatus = SystemStatusDB.getSystemStatus(pendingSystemStatus.getId(), userId);
-            //if initial status run script
-            if (currentSystemStatus != null
-                    && (HostSystem.INITIAL_STATUS.equals(currentSystemStatus.getStatusCd())
-                    || HostSystem.AUTH_FAIL_STATUS.equals(currentSystemStatus.getStatusCd())
-                    || HostSystem.PUBLIC_KEY_FAIL_STATUS.equals(currentSystemStatus.getStatusCd()))) {
-                System.out.println("SetCurrentSystem Status");
-                //set current session
-                currentSystemStatus = SSHUtil.openSSHTermOnSystem(passphrase, password, userId, sessionId, currentSystemStatus, userSchSessionMap);
-            }
-            if (currentSystemStatus != null
-                    && (HostSystem.AUTH_FAIL_STATUS.equals(currentSystemStatus.getStatusCd())
-                    || HostSystem.PUBLIC_KEY_FAIL_STATUS.equals(currentSystemStatus.getStatusCd()))) {
-                System.out.println("PendyngSystem Status");
-                pendingSystemStatus = currentSystemStatus;
-            } else {
-                System.out.println("Fi9nal else");
-                pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
-                //if success loop through systems until finished or need password
-                while (pendingSystemStatus != null && currentSystemStatus != null && HostSystem.SUCCESS_STATUS.equals(currentSystemStatus.getStatusCd())) {
-                    System.out.println("Final while");
-                    currentSystemStatus = SSHUtil.openSSHTermOnSystem(passphrase, password, userId, sessionId, pendingSystemStatus, userSchSessionMap);
-                    pendingSystemStatus = SystemStatusDB.getNextPendingSystem(userId);
-                }
-            }
-        }
-        */
+
         System.out.println("userId: " + userId);
         System.out.println("sessionId: " + sessionId);
        
-//        setSystemList(userId, sessionId);
-        //set system list if no pending systems
-        if (SystemStatusDB.getNextPendingSystem(userId) == null) {
             System.out.println("Settin system list");
             try {
                 //            setSystemList(userId, sessionId);
@@ -133,7 +98,6 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
             } catch (JSchException ex) {
                 Logger.getLogger(TestRunScript.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
         return SUCCESS;
     }
 
@@ -150,6 +114,9 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
                 passphrase = "";
             }
         }
+        
+        System.out.println("AppKey: "+appKey.getId().toString());
+        System.out.println("AppKey: "+appKey.getPrivateKey().trim().getBytes());
         //add private key
         jsch.addIdentity(appKey.getId().toString(), appKey.getPrivateKey().trim().getBytes(), appKey.getPublicKey().getBytes(), passphrase.getBytes());
 
