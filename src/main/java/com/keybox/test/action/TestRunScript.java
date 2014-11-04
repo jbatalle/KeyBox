@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.keybox.test.action;
 
 import com.jcraft.jsch.Channel;
@@ -18,7 +13,7 @@ import com.keybox.manage.model.HostSystem;
 
 import com.keybox.manage.model.SchSession;
 import com.keybox.manage.model.SessionOutput;
-import com.keybox.manage.model.SortedSet;
+//import com.keybox.manage.model.SortedSet;
 import com.keybox.manage.model.UserSchSessions;
 import com.keybox.manage.task.SecureShellTask;
 import static com.keybox.manage.util.SSHUtil.SESSION_TIMEOUT;
@@ -58,7 +53,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
     String passphrase;
     Long id;
     List<HostSystem> systemList = new ArrayList<HostSystem>();
-    SortedSet sortedSet = new SortedSet();
+//    SortedSet sortedSet = new SortedSet();
     HostSystem hostSystem = new HostSystem();
     static Map<Long, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<Long, UserSchSessions>();
 

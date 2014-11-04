@@ -18,7 +18,7 @@ package com.keybox.manage.util;
 import com.jcraft.jsch.*;
 import com.keybox.common.util.AppConfig;
 import com.keybox.manage.db.PrivateKeyDB;
-import com.keybox.manage.db.PublicKeyDB;
+//import com.keybox.manage.db.PublicKeyDB;
 import com.keybox.manage.model.*;
 import com.keybox.manage.task.SecureShellTask;
 import org.apache.commons.io.FileUtils;
@@ -331,41 +331,6 @@ public class SSHUtil {
             String authorizedKeys = hostSystem.getAuthorizedKeys().replaceAll("~\\/|~", "");
 
             String appPubKey = appPublicKey.replace("\n", "").trim();
-
-            //get keys assigned to system
-            List<String> assignedKeys = PublicKeyDB.getPublicKeysForSystem(hostSystem.getId());
-
-            String keyValue = "";
-            //if no assigned keys and no overwrite then append to previous auth keys file
-            if (assignedKeys.isEmpty() && !alwaysOverwrite) {
-
-                try {
-                    InputStream is = c.get(authorizedKeys);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    String existingKey;
-                    while ((existingKey = reader.readLine()) != null) {
-                        existingKey = existingKey.replace("\n", "").trim();
-                        if (!appPubKey.equals(existingKey)) {
-                            keyValue = keyValue + existingKey + "\n";
-                        }
-                    }
-                    is.close();
-                    reader.close();
-                } catch (SftpException ex) {
-                    //ignore exception if file doesn't exist
-                }
-
-
-            } else {
-                for (String existingKey : assignedKeys) {
-                    keyValue = keyValue + existingKey.replace("\n", "").trim() + "\n";
-                }
-            }
-            keyValue = keyValue + appPubKey + "\n";
-
-            InputStream inputStreamAuthKeyVal = new ByteArrayInputStream(keyValue.getBytes());
-            c.put(inputStreamAuthKeyVal, authorizedKeys);
-
 
         } catch (Exception e) {
             hostSystem.setErrorMsg(e.getMessage());

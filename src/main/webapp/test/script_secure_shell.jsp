@@ -379,7 +379,7 @@ $(document).ready(function () {
     }
 </style>
 
-<title>KeyBox - Composite Terms</title>
+<title>KeyBox - Composite Terms 2</title>
 
 </head>
 <body>
