@@ -7,7 +7,6 @@ public class UserSessionsOutput {
 
     Map<Long, StringBuilder> sessionOutputMap = new ConcurrentHashMap<Long,StringBuilder>();
 
-
     public Map<Long, StringBuilder> getSessionOutputMap() {
         return sessionOutputMap;
     }

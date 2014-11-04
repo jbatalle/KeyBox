@@ -23,8 +23,6 @@ import java.util.*;
  * Utility to look up configurable commands and resources
  */
 public class AppConfig {
-
-
     private static PropertiesConfiguration prop;
 
     static {
@@ -42,7 +40,6 @@ public class AppConfig {
      * @return configuration property
      */
     public static String getProperty(String name) {
-
         return prop.getString(name);
     }
 
@@ -54,7 +51,6 @@ public class AppConfig {
      * @return configuration property
      */
     public static String getProperty(String name, Map<String, String> replacementMap) {
-
         String value = prop.getString(name);
         if (StringUtils.isNotEmpty(value)) {
             //iterate through map to replace text
@@ -74,7 +70,6 @@ public class AppConfig {
      * @param name property name
      */
     public static void removeProperty(String name) {
-
         //remove property
         try {
             prop.clearProperty(name);
@@ -91,7 +86,6 @@ public class AppConfig {
      * @param value property value
      */
     public static void updateProperty(String name, String value) {
-
         //remove property
         try {
             prop.setProperty(name, value);
@@ -100,6 +94,4 @@ public class AppConfig {
             ex.printStackTrace();
         }
     }
-
-
 }
