@@ -16,7 +16,6 @@
 package com.keybox.test.action;
 
 import com.keybox.common.util.AuthUtil;
-import com.keybox.manage.db.*;
 import com.keybox.manage.model.*;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.convention.annotation.Action;
@@ -58,21 +57,15 @@ public class TestSecureShellAction extends ActionSupport implements ServletReque
             }
     )
     public String createTerms() {
-System.out.println("Create Terms function");
+        System.out.println("Create Terms function");
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
         Long sessionId = AuthUtil.getSessionId(servletRequest.getSession());
         System.out.println(sessionId);
         System.out.println(pendingSystemStatus);
         if (pendingSystemStatus != null && pendingSystemStatus.getId() != null) {
-System.out.println("Create Terms inside if");
-
-            
+            System.out.println("Create Terms inside if");
         }
-        //set system list if no pending systems
-//        if (SystemStatusDB.getNextPendingSystem(userId) == null) {
-            setSystemList(userId, sessionId);
-//        }
-
+        setSystemList(userId, sessionId);
 
         return SUCCESS;
     }
@@ -108,9 +101,6 @@ System.out.println("getNextPending");
         exitTerms();
         if (systemSelectId != null && !systemSelectId.isEmpty()) {
             //check to see if user has perms to access selected systems
-            if (!Auth.MANAGER.equals(AuthUtil.getUserType(servletRequest.getSession()))) {
-//                systemSelectId = SystemDB.checkSystemPerms(systemSelectId, userId);
-            }
 
          
 //            AuthUtil.setSessionId(servletRequest.getSession(), SessionAuditDB.createSessionLog(userId));

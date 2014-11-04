@@ -16,7 +16,7 @@
 package com.keybox.common.db;
 
 import com.keybox.common.util.AppConfig;
-import com.keybox.manage.model.Auth;
+//import com.keybox.manage.model.Auth;
 import com.keybox.manage.util.DBUtils;
 import com.keybox.manage.util.EncryptionUtil;
 import com.keybox.manage.util.SSHUtil;
@@ -59,8 +59,6 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
             ResultSet rs = statement.executeQuery("select * from information_schema.tables where upper(table_name) = 'USERS' and table_schema='PUBLIC'");
             if (rs == null || !rs.next()) {
                 resetSSHKey = true;
-                statement.executeUpdate("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, first_nm varchar, last_nm varchar, email varchar, username varchar not null, password varchar, auth_token varchar, enabled boolean not null default true, user_type varchar not null default '" + Auth.ADMINISTRATOR + "')");
-
 
                 statement.executeUpdate("create table if not exists system (id INTEGER PRIMARY KEY AUTO_INCREMENT, display_nm varchar not null, user varchar not null, host varchar not null, port INTEGER not null, authorized_keys varchar not null, status_cd varchar not null default 'INITIAL')");
                 statement.executeUpdate("create table if not exists profiles (id INTEGER PRIMARY KEY AUTO_INCREMENT, nm varchar not null, desc varchar not null)");
@@ -81,7 +79,6 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
                 PreparedStatement pStmt = connection.prepareStatement("insert into users (username, password, user_type) values(?,?,?)");
                 pStmt.setString(1, "admin");
                 pStmt.setString(2, EncryptionUtil.hash("changeme"));
-                pStmt.setString(3, Auth.MANAGER);
                 pStmt.execute();
                 DBUtils.closeStmt(pStmt);
 

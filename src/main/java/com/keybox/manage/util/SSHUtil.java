@@ -18,7 +18,6 @@ package com.keybox.manage.util;
 import com.jcraft.jsch.*;
 import com.keybox.common.util.AppConfig;
 import com.keybox.manage.db.PrivateKeyDB;
-//import com.keybox.manage.db.PublicKeyDB;
 import com.keybox.manage.model.*;
 import com.keybox.manage.task.SecureShellTask;
 import org.apache.commons.io.FileUtils;

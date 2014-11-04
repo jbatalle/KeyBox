@@ -10,10 +10,8 @@ import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.PrivateKeyDB;
 import com.keybox.manage.model.ApplicationKey;
 import com.keybox.manage.model.HostSystem;
-
 import com.keybox.manage.model.SchSession;
 import com.keybox.manage.model.SessionOutput;
-//import com.keybox.manage.model.SortedSet;
 import com.keybox.manage.model.UserSchSessions;
 import com.keybox.manage.task.SecureShellTask;
 import static com.keybox.manage.util.SSHUtil.SESSION_TIMEOUT;
@@ -46,9 +44,6 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
     String command;
     HttpServletResponse servletResponse;
     HttpServletRequest servletRequest;
-    List<Long> systemSelectId;
-    HostSystem currentSystemStatus;
-    HostSystem pendingSystemStatus;
     String password;
     String passphrase;
     Long id;
@@ -59,7 +54,8 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
 
     /**
      * creates composite terminals if there are errors or authentication issues.
-     * @return 
+     *
+     * @return
      */
     @Action(value = "/test/script",
             results = {
@@ -71,96 +67,90 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         hS.setDisplayNm("Mininet");
         hS.setHost("mininet");
         hS.setUser("demo");
-        hS.setPort(22);        
+        hS.setPort(22);
         hS.setStatusCd(HostSystem.SUCCESS_STATUS);
         hS.setId((long) 1);
 
-        Long userId = AuthUtil.getUserId(servletRequest.getSession());
+        Long userId = (long) 1;
         Long sessionId = AuthUtil.getSessionId(servletRequest.getSession());
         if (sessionId == null) {
             sessionId = (long) 1;
         }
-        userId = (long) 1;
-        System.out.println(pendingSystemStatus);
-
         System.out.println("userId: " + userId);
         System.out.println("sessionId: " + sessionId);
-       
-            System.out.println("Settin system list");
-            try {
-                //            setSystemList(userId, sessionId);
-                setSystemList2(userId, sessionId, hS);
-            } catch (JSchException ex) {
-                Logger.getLogger(TestRunScript.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        System.out.println("Settin system list");
+        try {
+            setSystemList2(userId, sessionId, hS);
+        } catch (JSchException ex) {
+            Logger.getLogger(TestRunScript.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return SUCCESS;
     }
 
     private void setSystemList2(Long userId, Long sessionId, HostSystem hostSystem) throws JSchException {
         JSch jsch = new JSch();
         SchSession schSession = null;
-        try{
-        ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
-        //check to see if passphrase has been provided
-        if (passphrase == null || passphrase.trim().equals("")) {
-            passphrase = appKey.getPassphrase();
-            //check for null inorder to use key without passphrase
-            if (passphrase == null) {
-                passphrase = "";
+        try {
+            ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
+            //check to see if passphrase has been provided
+            if (passphrase == null || passphrase.trim().equals("")) {
+                passphrase = appKey.getPassphrase();
+                //check for null inorder to use key without passphrase
+                if (passphrase == null) {
+                    passphrase = "";
+                }
             }
-        }
-        
-        System.out.println("AppKey: "+appKey.getId().toString());
-        System.out.println("AppKey: "+appKey.getPrivateKey().trim().getBytes());
-        //add private key
-        jsch.addIdentity(appKey.getId().toString(), appKey.getPrivateKey().trim().getBytes(), appKey.getPublicKey().getBytes(), passphrase.getBytes());
 
-        //create session
-        Session session = jsch.getSession(hostSystem.getUser(), hostSystem.getDisplayNm(), hostSystem.getPort());
-        session.setPassword("demo");
+            System.out.println("AppKey: " + appKey.getId().toString());
+            //add private key
+            jsch.addIdentity(appKey.getId().toString(), appKey.getPrivateKey().trim().getBytes(), appKey.getPublicKey().getBytes(), passphrase.getBytes());
 
-        //set password if it exists
-        if (password != null && !password.trim().equals("")) {
-            session.setPassword(password);
-        }
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.connect(SESSION_TIMEOUT);
-        Channel channel = session.openChannel("shell");
-        if ("true".equals(AppConfig.getProperty("agentForwarding"))) {
-            ((ChannelShell) channel).setAgentForwarding(true);
-        }
-        ((ChannelShell) channel).setPtyType("vt102");
+            //create session
+            Session session = jsch.getSession(hostSystem.getUser(), hostSystem.getDisplayNm(), hostSystem.getPort());
+            session.setPassword("demo");
 
-        InputStream outFromChannel = channel.getInputStream();
+            //set password if it exists
+            if (password != null && !password.trim().equals("")) {
+                session.setPassword(password);
+            }
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.connect(SESSION_TIMEOUT);
+            Channel channel = session.openChannel("shell");
+            if ("true".equals(AppConfig.getProperty("agentForwarding"))) {
+                ((ChannelShell) channel).setAgentForwarding(true);
+            }
+            ((ChannelShell) channel).setPtyType("vt102");
 
-        //new session output
-        SessionOutput sessionOutput = new SessionOutput();
-        sessionOutput.setHostSystemId(hostSystem.getId());
-        sessionOutput.setSessionId(sessionId);
+            InputStream outFromChannel = channel.getInputStream();
 
-        Runnable run = new SecureShellTask(sessionOutput, outFromChannel);
-        Thread thread = new Thread(run);
-        thread.start();
+            //new session output
+            SessionOutput sessionOutput = new SessionOutput();
+            sessionOutput.setHostSystemId(hostSystem.getId());
+            sessionOutput.setSessionId(sessionId);
 
-        OutputStream inputToChannel = channel.getOutputStream();
-        PrintStream commander = new PrintStream(inputToChannel, true);
+            Runnable run = new SecureShellTask(sessionOutput, outFromChannel);
+            Thread thread = new Thread(run);
+            thread.start();
 
-        channel.connect();
+            OutputStream inputToChannel = channel.getOutputStream();
+            PrintStream commander = new PrintStream(inputToChannel, true);
 
-        schSession = new SchSession();
-        schSession.setUserId(userId);
-        schSession.setSession(session);
-        schSession.setChannel(channel);
-        schSession.setCommander(commander);
-        schSession.setInputToChannel(inputToChannel);
-        schSession.setOutFromChannel(outFromChannel);
-        schSession.setHostSystem(hostSystem);
-        UserSchSessions userSchSession = new UserSchSessions();
-        Map<Long, SchSession> m = new HashMap<Long, SchSession>();
-        m.put((long) 1, schSession);
-        userSchSession.setSchSessionMap(m);
-        userSchSessionMap.put((long) 1, userSchSession);
-        }catch (Exception e) {
+            channel.connect();
+
+            schSession = new SchSession();
+            schSession.setUserId(userId);
+            schSession.setSession(session);
+            schSession.setChannel(channel);
+            schSession.setCommander(commander);
+            schSession.setInputToChannel(inputToChannel);
+            schSession.setOutFromChannel(outFromChannel);
+            schSession.setHostSystem(hostSystem);
+            UserSchSessions userSchSession = new UserSchSessions();
+            Map<Long, SchSession> m = new HashMap<Long, SchSession>();
+            m.put((long) 1, schSession);
+            userSchSession.setSchSessionMap(m);
+            userSchSessionMap.put((long) 1, userSchSession);
+        } catch (Exception e) {
             hostSystem.setErrorMsg(e.getMessage());
             if (e.getMessage().toLowerCase().contains("userauth fail")) {
                 hostSystem.setStatusCd(HostSystem.PUBLIC_KEY_FAIL_STATUS);
@@ -178,6 +168,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         return servletResponse;
     }
 
+    @Override
     public void setServletResponse(HttpServletResponse servletResponse) {
         this.servletResponse = servletResponse;
     }
@@ -186,6 +177,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         return servletRequest;
     }
 
+    @Override
     public void setServletRequest(HttpServletRequest servletRequest) {
         this.servletRequest = servletRequest;
     }
