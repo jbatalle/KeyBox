@@ -20,7 +20,6 @@ import com.keybox.manage.model.SessionOutput;
 import com.keybox.manage.model.UserSessionsOutput;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -103,7 +102,7 @@ public class SessionOutputUtil {
      * @param sessionId session id object
      * @return session output list
      */
-    public static List<SessionOutput> getOutput(Connection con, Long sessionId) {
+    public static List<SessionOutput> getOutput(Long sessionId) {
         List<SessionOutput> outputList = new ArrayList<SessionOutput>();
 
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);

@@ -21,12 +21,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-
 /**
  * contains information for an ssh session
  */
 public class SchSession {
-
 
     Long userId;
     Session session;
@@ -35,7 +33,6 @@ public class SchSession {
     InputStream outFromChannel;
     OutputStream inputToChannel;
     HostSystem hostSystem;
-
 
     public Session getSession() {
         return session;

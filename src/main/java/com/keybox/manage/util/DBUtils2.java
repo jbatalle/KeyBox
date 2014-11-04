@@ -23,7 +23,7 @@ import java.sql.Statement;
 /**
  * Class to create and close database resources
  */
-public class DBUtils {
+public class DBUtils2 {
 
     /**
      * returns DB connection

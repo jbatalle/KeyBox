@@ -16,59 +16,30 @@
 package com.keybox.manage.db;
 
 import com.keybox.manage.model.ApplicationKey;
-import com.keybox.manage.util.DBUtils;
-import com.keybox.manage.util.EncryptionUtil;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import com.keybox.manage.util.SSHUtil;
 
 /**
  * DAO that returns public / private key for the system generated private key
  */
 public class PrivateKeyDB {
 
-
     /**
      * returns public private key for applcation
      * @return app key values
      */
     public static ApplicationKey getApplicationKey() {
-
-        ApplicationKey appKey = null;
-
-        Connection con = null;
-
-        try {
-            con = DBUtils.getConn();
-
-            PreparedStatement stmt = con.prepareStatement("select * from  application_key");
-
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-
-                appKey= new ApplicationKey();
-                appKey.setId(rs.getLong("id"));
-                appKey.setPassphrase(EncryptionUtil.decrypt(rs.getString("passphrase")));
-                appKey.setPrivateKey(EncryptionUtil.decrypt(rs.getString("private_key")));
-                appKey.setPublicKey(rs.getString("public_key"));
-
-            }
-            DBUtils.closeRs(rs);
-            DBUtils.closeStmt(stmt);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        DBUtils.closeConn(con);
-
-
+        
+        String passphrase = SSHUtil.keyGen();
+        String publicKey = SSHUtil.getPublicKey();
+        String privateKey = SSHUtil.getPrivateKey();
+   
+        
+        ApplicationKey appKey = new ApplicationKey();
+        appKey.setId((long) 22);
+        appKey.setPassphrase(passphrase);
+        appKey.setPrivateKey(privateKey);
+        appKey.setPublicKey(publicKey);
         return appKey;
     }
-
-
-
-
-
+    
 }

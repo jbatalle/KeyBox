@@ -17,11 +17,9 @@ package com.keybox.manage.task;
 
 import com.google.gson.Gson;
 import com.keybox.manage.model.SessionOutput;
-import com.keybox.manage.util.DBUtils;
 import com.keybox.manage.util.SessionOutputUtil;
 
 import javax.websocket.Session;
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -38,11 +36,11 @@ public class SentOutputTask implements Runnable {
 
     }
 
+    @Override
     public void run() {
         System.out.println("SentOutputTask - RUN");
-        Connection con = DBUtils.getConn();
         while (session.isOpen()) {
-            List<SessionOutput> outputList = SessionOutputUtil.getOutput(con, sessionId);
+            List<SessionOutput> outputList = SessionOutputUtil.getOutput(sessionId);
             try {
                 if (outputList != null && !outputList.isEmpty()) {
                     String json = new Gson().toJson(outputList);
@@ -58,6 +56,5 @@ public class SentOutputTask implements Runnable {
 
         }
         System.out.println("Closing");
-        DBUtils.closeConn(con);
     }
 }

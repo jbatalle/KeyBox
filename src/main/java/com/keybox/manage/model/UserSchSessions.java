@@ -15,14 +15,11 @@
  */
 package com.keybox.manage.model;
 
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserSchSessions {
-
     Map<Long, SchSession> schSessionMap = new ConcurrentHashMap<Long, SchSession>();
-
 
     public Map<Long, SchSession> getSchSessionMap() {
         return schSessionMap;

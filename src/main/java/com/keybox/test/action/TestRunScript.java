@@ -103,6 +103,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
 
             System.out.println("AppKey: " + appKey.getId().toString());
             //add private key
+            
             jsch.addIdentity(appKey.getId().toString(), appKey.getPrivateKey().trim().getBytes(), appKey.getPublicKey().getBytes(), passphrase.getBytes());
 
             //create session

@@ -16,8 +16,7 @@
 package com.keybox.common.db;
 
 import com.keybox.common.util.AppConfig;
-//import com.keybox.manage.model.Auth;
-import com.keybox.manage.util.DBUtils;
+import com.keybox.manage.util.DBUtils2;
 import com.keybox.manage.util.EncryptionUtil;
 import com.keybox.manage.util.SSHUtil;
 
@@ -53,7 +52,7 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
         //check if reset ssh application key is set
         boolean resetSSHKey = "true".equals(AppConfig.getProperty("resetApplicationSSHKey"));
         try {
-            connection = DBUtils.getConn();
+            connection = DBUtils2.getConn();
             statement = connection.createStatement();
 
             ResultSet rs = statement.executeQuery("select * from information_schema.tables where upper(table_name) = 'USERS' and table_schema='PUBLIC'");
@@ -80,10 +79,10 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
                 pStmt.setString(1, "admin");
                 pStmt.setString(2, EncryptionUtil.hash("changeme"));
                 pStmt.execute();
-                DBUtils.closeStmt(pStmt);
+                DBUtils2.closeStmt(pStmt);
 
             }
-            DBUtils.closeRs(rs);
+            DBUtils2.closeRs(rs);
 
             //if reset ssh application key then generate new key
             if (resetSSHKey) {
@@ -91,7 +90,7 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
                 //delete old key entry
                 PreparedStatement pStmt = connection.prepareStatement("delete from application_key");
                 pStmt.execute();
-                DBUtils.closeStmt(pStmt);
+                DBUtils2.closeStmt(pStmt);
 
                 //generate new key and insert passphrase
                 System.out.println("Setting KeyBox SSH public/private key pair");
@@ -107,7 +106,7 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
                 pStmt.setString(2, EncryptionUtil.encrypt(privateKey));
                 pStmt.setString(3, EncryptionUtil.encrypt(passphrase));
                 pStmt.execute();
-                DBUtils.closeStmt(pStmt);
+                DBUtils2.closeStmt(pStmt);
 
                 System.out.println("KeyBox Public Key:");
                 System.out.println(publicKey);
@@ -128,8 +127,8 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
             ex.printStackTrace();
         }
 
-        DBUtils.closeStmt(statement);
-        DBUtils.closeConn(connection);
+        DBUtils2.closeStmt(statement);
+        DBUtils2.closeConn(connection);
     }
 
 }

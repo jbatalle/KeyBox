@@ -23,8 +23,6 @@ public class SessionOutput {
     Long hostSystemId;
     String output;
 
-
-
     public Long getHostSystemId() {
         return hostSystemId;
     }
@@ -40,7 +38,6 @@ public class SessionOutput {
     public void setSessionId(Long sessionId) {
         this.sessionId = sessionId;
     }
-
 
     public String getOutput() {
         return output;

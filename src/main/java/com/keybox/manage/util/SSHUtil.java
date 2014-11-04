@@ -34,9 +34,8 @@ import java.util.UUID;
  */
 public class SSHUtil {
 
-
     //system path to public/private key
-    public static final String KEY_PATH = DBUtils.class.getClassLoader().getResource("keydb").getPath();
+    public static final String KEY_PATH = DBUtils2.class.getClassLoader().getResource("keydb").getPath();
 
     //key type - rsa or dsa
     public static final String KEY_TYPE = AppConfig.getProperty("sshKeyType");
