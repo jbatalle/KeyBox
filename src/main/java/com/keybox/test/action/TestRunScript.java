@@ -13,8 +13,6 @@ import com.jcraft.jsch.Session;
 import com.keybox.common.util.AppConfig;
 import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.PrivateKeyDB;
-import com.keybox.manage.db.ScriptDB;
-import com.keybox.manage.db.SystemDB;
 import com.keybox.manage.db.SystemStatusDB;
 import com.keybox.manage.model.ApplicationKey;
 import com.keybox.manage.model.HostSystem;
@@ -25,18 +23,12 @@ import com.keybox.manage.model.SessionOutput;
 import com.keybox.manage.model.SortedSet;
 import com.keybox.manage.model.UserSchSessions;
 import com.keybox.manage.task.SecureShellTask;
-import com.keybox.manage.util.SSHUtil;
 import static com.keybox.manage.util.SSHUtil.SESSION_TIMEOUT;
-import static com.keybox.test.action.TestSecureShellAction.userSchSessionMap;
-import static com.opensymphony.xwork2.Action.INPUT;
 import static com.opensymphony.xwork2.Action.SUCCESS;
 import com.opensymphony.xwork2.ActionSupport;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +67,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
 
     /**
      * creates composite terminals if there are errors or authentication issues.
+     * @return 
      */
     @Action(value = "/test/script",
             results = {
@@ -89,9 +82,6 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         hS.setPort(22);        
         hS.setStatusCd(HostSystem.SUCCESS_STATUS);
         hS.setId((long) 1);
-        String returned = saveSystem(hS, "", "demo");
-        
-        System.out.println("Returned value when save " + returned);
 
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
         Long sessionId = AuthUtil.getSessionId(servletRequest.getSession());
@@ -222,60 +212,6 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         }
 
         systemList.add(schSession.getHostSystem());
-    }
-
-    /**
-     * set system list once all connections have been attempted
-     *
-     * @param userId user id
-     * @param sessionId session id
-     */
-    private void setSystemList(Long userId, Long sessionId) {
-        System.out.println("Setting ssystem list function");
-        System.out.println(userSchSessionMap);
-        System.out.println("Session id: " + sessionId);
-        //check user map
-        if (userSchSessionMap != null && !userSchSessionMap.isEmpty() && userSchSessionMap.get(sessionId) != null) {
-            System.out.println("First if");
-            //get user sessions
-            Map<Long, SchSession> schSessionMap = userSchSessionMap.get(sessionId).getSchSessionMap();
-            for (SchSession schSession : schSessionMap.values()) {
-                System.out.println("Adding");
-                //add to host system list
-                systemList.add(schSession.getHostSystem());
-                //run script it exists
-                if (script != null && script.getId() != null && script.getId() > 0) {
-                    script = ScriptDB.getScript(script.getId(), userId);
-                    BufferedReader reader = new BufferedReader(new StringReader(script.getScript()));
-                    String line;
-                    try {
-
-                        while ((line = reader.readLine()) != null) {
-                            schSession.getCommander().println(line);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                    }
-                }
-            }
-        }
-
-    }
-
-    private String saveSystem(HostSystem hostSystem, String passphrase, String password) {
-        String retVal = SUCCESS;
-        hostSystem = SSHUtil.authAndAddPubKey(hostSystem, passphrase, password, false);
-        if (hostSystem.getId() != null) {
-            SystemDB.updateSystem(hostSystem);
-        } else {
-            hostSystem.setId(SystemDB.insertSystem(hostSystem));
-        }
-        sortedSet = SystemDB.getSystemSet(sortedSet);
-        if (!HostSystem.SUCCESS_STATUS.equals(hostSystem.getStatusCd())) {
-            retVal = INPUT;
-        }
-        return retVal;
     }
 
     public HttpServletResponse getServletResponse() {
