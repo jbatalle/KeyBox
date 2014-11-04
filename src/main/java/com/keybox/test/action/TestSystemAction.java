@@ -31,6 +31,7 @@ import java.util.List;
 
 /**
  * Action to manage systems
+ * TO REMOVE
  * Josep Batallé (josep.batalle@i2cat.net)
  */
 public class TestSystemAction extends ActionSupport implements ServletRequestAware {

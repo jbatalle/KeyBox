@@ -86,8 +86,11 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         hS.setDisplayNm("Mininet");
         hS.setHost("mininet");
         hS.setUser("demo");
-        hS.setPort(22);
+        hS.setPort(22);        
+        hS.setStatusCd(HostSystem.SUCCESS_STATUS);
+        hS.setId((long) 1);
         String returned = saveSystem(hS, "", "demo");
+        
         System.out.println("Returned value when save " + returned);
 
         Long userId = AuthUtil.getUserId(servletRequest.getSession());
@@ -96,7 +99,8 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
             sessionId = (long) 1;
         }
         userId = (long) 1;
-
+        System.out.println(pendingSystemStatus);
+/*
         System.out.println(pendingSystemStatus);
         if (pendingSystemStatus != null && pendingSystemStatus.getId() != null) {
             System.out.println("Inside If");
@@ -127,7 +131,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
                 }
             }
         }
-        
+        */
         System.out.println("userId: " + userId);
         System.out.println("sessionId: " + sessionId);
        
@@ -137,7 +141,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
             System.out.println("Settin system list");
             try {
                 //            setSystemList(userId, sessionId);
-                setSystemList2(userId, sessionId);
+                setSystemList2(userId, sessionId, hS);
             } catch (JSchException ex) {
                 Logger.getLogger(TestRunScript.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -145,19 +149,10 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         return SUCCESS;
     }
 
-    private void setSystemList2(Long userId, Long sessionId) throws JSchException {
+    private void setSystemList2(Long userId, Long sessionId, HostSystem hostSystem) throws JSchException {
         JSch jsch = new JSch();
-
-        hostSystem = new HostSystem();
-        hostSystem.setDisplayNm("Mininet");
-        hostSystem.setHost("mininet");
-        hostSystem.setUser("demo");
-        hostSystem.setPort(22);
-        hostSystem.setId((long) 1);
-        hostSystem.setStatusCd(HostSystem.SUCCESS_STATUS);
-
         SchSession schSession = null;
-try{
+        try{
         ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
         //check to see if passphrase has been provided
         if (passphrase == null || passphrase.trim().equals("")) {
