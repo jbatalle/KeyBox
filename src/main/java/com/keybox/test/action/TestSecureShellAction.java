@@ -52,10 +52,6 @@ public class TestSecureShellAction extends ActionSupport implements ServletReque
 
     static Map<Long, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<Long, UserSchSessions>();
 
-
-    Script script = new Script();
-
-
     /**
      * creates composite terminals if there are errors or authentication issues.
      */
@@ -229,20 +225,7 @@ System.out.println("getNextPending");
                 //add to host system list
                 systemList.add(schSession.getHostSystem());
                 //run script it exists
-                if (script != null && script.getId() != null && script.getId() > 0) {
-                    script = ScriptDB.getScript(script.getId(), userId);
-                    BufferedReader reader = new BufferedReader(new StringReader(script.getScript()));
-                    String line;
-                    try {
-
-                        while ((line = reader.readLine()) != null) {
-                            schSession.getCommander().println(line);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                    }
-                }
+                
             }
         }
 
@@ -310,14 +293,6 @@ System.out.println("getNextPending");
 
     public void setPendingSystemStatus(HostSystem pendingSystemStatus) {
         this.pendingSystemStatus = pendingSystemStatus;
-    }
-
-    public Script getScript() {
-        return script;
-    }
-
-    public void setScript(Script script) {
-        this.script = script;
     }
 
     public String getPassphrase() {
