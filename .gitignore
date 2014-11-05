@@ -8,3 +8,5 @@ target/*
 .idea/*
 *.iml
 *.DS_Store
+publicKey.pub
+pvtKey_id_rsa

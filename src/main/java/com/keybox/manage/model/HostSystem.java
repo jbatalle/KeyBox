@@ -39,11 +39,8 @@ public class HostSystem {
     public static final String GENERIC_FAIL_STATUS="GENERICFAIL";
     public static final String SUCCESS_STATUS="SUCCESS";
 
-
-
     public Long getId() {
         return id;
-
     }
 
     public void setId(Long id) {
@@ -73,8 +70,6 @@ public class HostSystem {
     public void setHost(String host) {
         this.host = host;
     }
-
-
 
     public String getDisplayLabel() {
         return getDisplayNm() +" - ( " +getUser() +"@"+getHost()+":"+getPort()+" )";

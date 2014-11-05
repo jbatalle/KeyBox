@@ -23,7 +23,6 @@ public class PublicKey {
     String keyNm;
     String publicKey;
 
-
     public String getKeyNm() {
         return keyNm;
     }

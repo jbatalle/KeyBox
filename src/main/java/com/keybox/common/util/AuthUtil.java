@@ -1,17 +1,17 @@
 /**
  * Copyright 2013 Sean Kavanagh - sean.p.kavanagh6@gmail.com
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.keybox.common.util;
 
@@ -20,12 +20,11 @@ import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-
 /**
- * Utility to obtain the authentication token from the http session and the user id from the auth token
+ * Utility to obtain the authentication token from the http session and the user
+ * id from the auth token
  */
 public class AuthUtil {
-
 
     /**
      * set user type
@@ -46,7 +45,7 @@ public class AuthUtil {
      * @return user type
      */
     public static String getUserType(HttpSession session) {
-        String userType= (String)session.getAttribute("userType");
+        String userType = (String) session.getAttribute("userType");
         return userType;
     }
 
@@ -69,10 +68,10 @@ public class AuthUtil {
      * @return session id
      */
     public static Long getSessionId(HttpSession session) {
-        Long sessionId=null;
-        String sessionIdStr = EncryptionUtil.decrypt((String)session.getAttribute("sessionId"));
-        if(sessionIdStr!=null && !sessionIdStr.trim().equals("")){
-            sessionId=Long.parseLong(sessionIdStr);
+        Long sessionId = null;
+        String sessionIdStr = EncryptionUtil.decrypt((String) session.getAttribute("sessionId"));
+        if (sessionIdStr != null && !sessionIdStr.trim().equals("")) {
+            sessionId = Long.parseLong(sessionIdStr);
         }
         return sessionId;
     }
@@ -84,10 +83,10 @@ public class AuthUtil {
      * @return user id
      */
     public static Long getUserId(HttpSession session) {
-        Long userId=null;
-        String userIdStr = EncryptionUtil.decrypt((String)session.getAttribute("userId"));
-        if(userIdStr!=null && !userIdStr.trim().equals("")){
-            userId=Long.parseLong(userIdStr);
+        Long userId = null;
+        String userIdStr = EncryptionUtil.decrypt((String) session.getAttribute("userId"));
+        if (userIdStr != null && !userIdStr.trim().equals("")) {
+            userId = Long.parseLong(userIdStr);
         }
         return userId;
     }
@@ -98,7 +97,7 @@ public class AuthUtil {
      * @param session http session
      * @return authentication token
      */
-    public static String getAuthToken( HttpSession session) {
+    public static String getAuthToken(HttpSession session) {
         String authToken = (String) session.getAttribute("authToken");
         authToken = EncryptionUtil.decrypt(authToken);
         return authToken;
@@ -162,7 +161,7 @@ public class AuthUtil {
         session.setAttribute("timeout", null);
         session.setAttribute("authToken", null);
         session.setAttribute("userId", null);
-        session.setAttribute("sessionId",null);
+        session.setAttribute("sessionId", null);
 
         session.invalidate();
     }

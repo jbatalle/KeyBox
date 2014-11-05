@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -103,25 +102,19 @@ public class SSHUtil {
      * @return passphrase for system generated key
      */
     public static String keyGen() {
-
-
         //get passphrase cmd from properties file
         Map<String, String> replaceMap = new HashMap<String, String>();
         replaceMap.put("randomPassphrase", UUID.randomUUID().toString());
 
         String passphrase = AppConfig.getProperty("defaultSSHPassphrase", replaceMap);
-
         AppConfig.updateProperty("defaultSSHPassphrase", "${randomPassphrase}");
-
         return keyGen(passphrase);
-
     }
 
     /**
      * delete SSH keys
      */
     public static void deleteGenSSHKeys() {
-
         deletePvtGenSSHKey();
         //delete public key
         try {
@@ -131,20 +124,16 @@ public class SSHUtil {
         }
     }
 
-
     /**
      * delete SSH keys
      */
     public static void deletePvtGenSSHKey() {
-
         //delete private key
         try {
             File file = new File(PVT_KEY);
             FileUtils.forceDelete(file);
         } catch (Exception ex) {
         }
-
-
     }
 
     /**
@@ -153,7 +142,6 @@ public class SSHUtil {
      * @return passphrase for system generated key
      */
     public static String keyGen(String passphrase) {
-
         deleteGenSSHKeys();
 
         if (StringUtils.isEmpty(AppConfig.getProperty("privateKey")) || StringUtils.isEmpty(AppConfig.getProperty("publicKey"))) {
@@ -176,11 +164,7 @@ public class SSHUtil {
                 System.out.println(e);
             }
         }
-
-
         return passphrase;
-
-
     }
 
     /**
@@ -236,16 +220,11 @@ public class SSHUtil {
                 hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
             }
 
-
         }
-
         if (session != null) {
             session.disconnect();
         }
-
         return hostSystem;
-
-
     }
 
 
@@ -259,15 +238,11 @@ public class SSHUtil {
      * @return status uploaded file
      */
     public static HostSystem pushUpload(HostSystem hostSystem, Session session, String source, String destination) {
-
-
         hostSystem.setStatusCd(HostSystem.SUCCESS_STATUS);
         Channel channel = null;
         ChannelSftp c = null;
 
         try {
-
-
             channel = session.openChannel("sftp");
             channel.setInputStream(System.in);
             channel.setOutputStream(System.out);
@@ -275,7 +250,6 @@ public class SSHUtil {
 
             c = (ChannelSftp) channel;
             destination = destination.replaceAll("~\\/|~", "");
-
 
             //get file input stream
             FileInputStream file = new FileInputStream(source);
@@ -294,12 +268,8 @@ public class SSHUtil {
         if (channel != null) {
             channel.disconnect();
         }
-
         return hostSystem;
-
-
     }
-
 
     /**
      * distributes authorized keys for host system
@@ -311,8 +281,6 @@ public class SSHUtil {
      * @return status of key distribution
      */
     public static HostSystem addPubKey(HostSystem hostSystem, Session session, String appPublicKey, boolean alwaysOverwrite) {
-
-
         Channel channel = null;
         ChannelSftp c = null;
 
@@ -398,12 +366,10 @@ public class SSHUtil {
 
             InputStream outFromChannel = channel.getInputStream();
 
-
             //new session output
             SessionOutput sessionOutput = new SessionOutput();
             sessionOutput.setHostSystemId(hostSystem.getId());
             sessionOutput.setSessionId(sessionId);
-
 
             Runnable run = new SecureShellTask(sessionOutput, outFromChannel);
             Thread thread = new Thread(run);
@@ -412,8 +378,6 @@ public class SSHUtil {
 
             OutputStream inputToChannel = channel.getOutputStream();
             PrintStream commander = new PrintStream(inputToChannel, true);
-
-
             channel.connect();
 
             schSession = new SchSession();
@@ -425,7 +389,6 @@ public class SSHUtil {
             schSession.setOutFromChannel(outFromChannel);
             schSession.setHostSystem(hostSystem);
 
-
         } catch (Exception e) {
             hostSystem.setErrorMsg(e.getMessage());
             if (e.getMessage().toLowerCase().contains("userauth fail")) {
@@ -436,7 +399,6 @@ public class SSHUtil {
                 hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
             }
         }
-
 
         //add session to map
         if (hostSystem.getStatusCd().equals(HostSystem.SUCCESS_STATUS)) {
@@ -456,11 +418,6 @@ public class SSHUtil {
             userSessionMap.put(sessionId, userSchSessions);
         }
 
-//        SystemStatusDB.updateSystemStatus(hostSystem, userId);
-//        SystemDB.updateSystem(hostSystem);
-
         return hostSystem;
     }
-
-
 }

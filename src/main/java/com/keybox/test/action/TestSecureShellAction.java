@@ -39,7 +39,6 @@ public class TestSecureShellAction extends ActionSupport implements ServletReque
     HttpServletResponse servletResponse;
     HttpServletRequest servletRequest;
     List<Long> systemSelectId;
-    HostSystem currentSystemStatus;
     HostSystem pendingSystemStatus;
     String password;
     String passphrase;
@@ -223,14 +222,6 @@ System.out.println("getNextPending");
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public HostSystem getCurrentSystemStatus() {
-        return currentSystemStatus;
-    }
-
-    public void setCurrentSystemStatus(HostSystem currentSystemStatus) {
-        this.currentSystemStatus = currentSystemStatus;
     }
 
     public HostSystem getPendingSystemStatus() {
