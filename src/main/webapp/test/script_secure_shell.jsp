@@ -1,30 +1,12 @@
-<%
-    /**
-     * Copyright 2013 Sean Kavanagh - sean.p.kavanagh6@gmail.com
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     *
-     * http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <!DOCTYPE html>
 <html>
 <head>
-
+<title>KeyBox - Composite Terms</title>
 <jsp:include page="../_res/inc/header.jsp"/>
 
 <script type="text/javascript">
 $(document).ready(function () {
-
 
     $("#set_password_dialog").dialog({
         autoOpen: false,
@@ -43,18 +25,6 @@ $(document).ready(function () {
         height: 225,
         minWidth: 550,
         modal: true
-    });
-    $("#upload_push_dialog").dialog({
-        autoOpen: false,
-        height: 375,
-        minWidth: 725,
-        modal: true,
-        open: function (event, ui) {
-            $(".ui-dialog-titlebar-close").show();
-        },
-        close: function () {
-            $("#upload_push_frame").attr("src", "");
-        }
     });
 
     $(".termwrapper").sortable({
@@ -85,7 +55,6 @@ $(document).ready(function () {
         }
     });
 
-
     //submit add or edit form
     $(".submit_btn").button().click(function () {
         <s:if test="pendingSystemStatus!=null">
@@ -100,10 +69,8 @@ $(document).ready(function () {
 
     });
 
-
     //if terminal window toggle active for commands
     $(".run_cmd").click(function () {
-
         //check for cmd-click / ctr-click
         if (!keys[17] && !keys[91] && !keys[93] && !keys[224]) {
             $(".run_cmd").removeClass('run_cmd_active');
@@ -120,26 +87,6 @@ $(document).ready(function () {
     $('#select_all').click(function () {
         $(".run_cmd").addClass('run_cmd_active');
     });
-
-
-    $('#upload_push').click(function () {
-        //get id list from selected terminals
-        var ids = [];
-        $(".run_cmd_active").each(function (index) {
-            var id = $(this).attr("id").replace("run_cmd_", "");
-            ids.push(id);
-        });
-        var idListStr = '?action=upload';
-        ids.forEach(function (entry) {
-            idListStr = idListStr + '&idList=' + entry;
-        });
-
-        $("#upload_push_frame").attr("src", "setUpload.action" + idListStr);
-        $("#upload_push_dialog").dialog("open");
-
-
-    });
-
 
     <s:if test="currentSystemStatus!=null && currentSystemStatus.statusCd=='GENERICFAIL'">
     $("#error_dialog").dialog("open");
@@ -178,18 +125,19 @@ $(document).ready(function () {
     $(document).keypress(function (e) {
         if (termFocus) {
             var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
-
+console.log("KeyCode: "+keyCode);
             var idList = [];
             $(".run_cmd_active").each(function (index) {
                 var id = $(this).attr("id").replace("run_cmd_", "");
                 idList.push(id);
             });
-
+console.log("String fromCharCode: "+String.fromCharCode(keyCode));
             if (String.fromCharCode(keyCode) && String.fromCharCode(keyCode) != ''
                     && !keys[91] && !keys[93] && !keys[224] && !keys[27]
                     && !keys[37] && !keys[38] && !keys[39] && !keys[40]
                     && !keys[13] && !keys[8] && !keys[9] && !keys[17]  && !keys[46]) {
                 var cmdStr = String.fromCharCode(keyCode);
+console.log("KeyCOde: "+keyCode+ ". Cmd: "+cmdStr);
                 connection.send(JSON.stringify({id: idList, command: cmdStr}));
             }
 
@@ -221,11 +169,9 @@ $(document).ready(function () {
                     var id = $(this).attr("id").replace("run_cmd_", "");
                     idList.push(id);
                 });
-
                 connection.send(JSON.stringify({id: idList, keyCode: keyCode}));
             }
         }
-
     });
 
     $(document).keyup(function (e) {
@@ -269,13 +215,15 @@ $(document).ready(function () {
     });
 
     var loc = window.location, ws_uri;
-    if (loc.protocol === "https:") {
+/*    if (loc.protocol === "https:") {
         ws_uri = "wss:";
     } else {
         ws_uri = "ws:";
     }
     ws_uri += "//" + loc.host + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
-
+*/  ws_uri = "wss://" + loc.host + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
+//ws_uri = "wss://" + loc.host + ':8443' + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
+    
     var connection = new WebSocket(ws_uri);
 
     // Log errors
@@ -286,6 +234,7 @@ $(document).ready(function () {
     // Log messages from the server
     connection.onmessage = function (e) {
         var json = jQuery.parseJSON(e.data);
+        console.log(json);
         $.each(json, function (key, val) {
             if (val.output != '') {
                 termMap[val.hostSystemId].write(val.output);
@@ -302,7 +251,6 @@ $(document).ready(function () {
         runRegExMatch();
         return false;
     });
-
 
     var matchFunction = null;
 
@@ -359,7 +307,6 @@ $(document).ready(function () {
     </s:if>
 });
 
-
 </script>
 
 <style>
@@ -379,7 +326,6 @@ $(document).ready(function () {
     }
 </style>
 
-<title>KeyBox - Composite Terms 2</title>
 
 </head>
 <body>
@@ -400,6 +346,24 @@ $(document).ready(function () {
     </div>
 -->
 
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="collapse navbar-collapse">
+            <s:if test="pendingSystemStatus==null">
+                <div style="float:right;width:1px;">
+                    <textarea name="dummy" id="dummy" size="1"
+                            style="border:none;color:#FFFFFF;width:1px;height:1px"></textarea>
+                    <input type="text" name="dummy2" id="dummy2" size="1"
+                            style="border:none;color:#FFFFFF;width:1px;height:1px"/>
+                </div>
+                <div class="clear"></div>
+            </s:if>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</div>
+<div class="term-container container">
+    <div class="termwrapper">
     <s:iterator value="systemList">
         <div id="run_cmd_<s:property value="id"/>" class="run_cmd_active run_cmd">
             <h6 class="term-header"><s:property value="displayLabel"/></h6>
@@ -408,7 +372,8 @@ $(document).ready(function () {
             </div>
         </div>
     </s:iterator>
-    
+    </div>
+</div>
     
 <div id="set_password_dialog" title="Enter Password">
     <p class="error"><s:property value="pendingSystemStatus.errorMsg"/></p>

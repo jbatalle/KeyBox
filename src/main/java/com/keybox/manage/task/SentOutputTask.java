@@ -45,7 +45,7 @@ public class SentOutputTask implements Runnable {
                 if (outputList != null && !outputList.isEmpty()) {
                     String json = new Gson().toJson(outputList);
                     //send json to session
-                    System.out.println("SentOutputTask - Send text");
+                    System.out.println("SentOutputTask - Send text: "+json);
                     this.session.getBasicRemote().sendText(json);
                 }
                 Thread.sleep(50);

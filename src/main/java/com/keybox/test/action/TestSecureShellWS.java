@@ -32,6 +32,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,7 +62,7 @@ public class TestSecureShellWS {
         this.session = session;
 
         System.out.println("TestSecureShellWS - HttpSessionId :" + this.sessionId);
-        System.out.println("TestSecureShellWS - sesionId :" + session.getId());
+        System.out.println("TestSecureShellWS - sesion getId :" + session.getId());
         Long t = (long) 1;
         Object o = EncryptionUtil.encrypt(t.toString());
         String sessionIdStr = EncryptionUtil.decrypt((String) o);
@@ -78,14 +79,10 @@ public class TestSecureShellWS {
 
     @OnMessage
     public void onMessage(String message) {
-       
-        System.out.println("SessionId" + sessionId);
         if(sessionId == 0) sessionId = (long) 1;
-        System.out.println("OnMessage" + message);
+        System.out.println("SessionId" + sessionId+" OnMessage" + message);
         if (session.isOpen()) {
-
             if (StringUtils.isNotEmpty(message)) {
-
                 Map jsonRoot = new Gson().fromJson(message, Map.class);
 
                 String command = (String) jsonRoot.get("command");
@@ -95,8 +92,13 @@ public class TestSecureShellWS {
                 if (keyCodeDbl != null) {
                     keyCode = keyCodeDbl.intValue();
                 }
-System.out.println("Before for");
+System.out.println("Before for "+command + " KeyCode: "+keyCode);
+List<String> is = new ArrayList<String>();
+is.add("1");
+jsonRoot.put("id", is);
+System.out.println("Before for "+command);
                 for (String idStr : (ArrayList<String>) jsonRoot.get("id")) {
+System.out.println("After for");
                     Long id = Long.parseLong(idStr);
 System.out.println("Prev Id: "+id);
                     //get servletRequest.getSession() for user
@@ -129,7 +131,7 @@ System.out.println("Prev Id: "+id);
 
     @OnClose
     public void onClose() {
-
+System.out.println("CLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOSE CONNECTION");
         if (TestSecureShellAction.getUserSchSessionMap() != null) {
             UserSchSessions userSchSessions = TestSecureShellAction.getUserSchSessionMap().get(sessionId);
             if (userSchSessions != null) {

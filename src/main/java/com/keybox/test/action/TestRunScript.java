@@ -91,7 +91,9 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         JSch jsch = new JSch();
         SchSession schSession = null;
         try {
+            System.out.println("GET APP KEY");
             ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
+            System.out.println("GET APP KEY - RECEIVED");
             //check to see if passphrase has been provided
             if (passphrase == null || passphrase.trim().equals("")) {
                 passphrase = appKey.getPassphrase();
@@ -153,6 +155,8 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
             userSchSessionMap.put((long) 1, userSchSession);
         } catch (Exception e) {
             hostSystem.setErrorMsg(e.getMessage());
+            System.out.println("MEssage: "+e.getMessage());
+/*            System.out.println(e.getMessage().toLowerCase());
             if (e.getMessage().toLowerCase().contains("userauth fail")) {
                 hostSystem.setStatusCd(HostSystem.PUBLIC_KEY_FAIL_STATUS);
             } else if (e.getMessage().toLowerCase().contains("auth fail") || e.getMessage().toLowerCase().contains("auth cancel")) {
@@ -160,6 +164,7 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
             } else {
                 hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
             }
+*/        
         }
 
         systemList.add(schSession.getHostSystem());

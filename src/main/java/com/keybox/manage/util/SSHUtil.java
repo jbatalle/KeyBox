@@ -35,15 +35,15 @@ import java.util.UUID;
 public class SSHUtil {
 
     //system path to public/private key
-    public static final String KEY_PATH = DBUtils2.class.getClassLoader().getResource("keydb").getPath();
+//    public static final String KEY_PATH = DBUtils2.class.getClassLoader().getResource("keydb").getPath();
 
     //key type - rsa or dsa
     public static final String KEY_TYPE = AppConfig.getProperty("sshKeyType");
 
     //private key name
-    public static final String PVT_KEY = KEY_PATH + "/id_" + KEY_TYPE;
+    public static final String PVT_KEY = "pvtKey_id_" + KEY_TYPE;
     //public key name
-    public static final String PUB_KEY = PVT_KEY + ".pub";
+    public static final String PUB_KEY = "publicKey.pub";
 
 
     public static final int SESSION_TIMEOUT = 60000;
