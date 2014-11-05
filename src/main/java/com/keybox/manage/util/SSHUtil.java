@@ -139,6 +139,7 @@ public class SSHUtil {
     /**
      * generates system's public/private key par and returns passphrase
      *
+     * @param passphrase
      * @return passphrase for system generated key
      */
     public static String keyGen(String passphrase) {

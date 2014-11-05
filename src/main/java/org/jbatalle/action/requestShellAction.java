@@ -1,5 +1,6 @@
-package com.keybox.test.action;
+package org.jbatalle.action;
 
+import com.keybox.test.action.*;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
@@ -38,10 +39,14 @@ import org.apache.struts2.interceptor.ServletResponseAware;
  *
  * @author Josep Batallé <josep.batalle@i2cat.net>
  */
-public class TestRunScript extends ActionSupport implements ServletRequestAware, ServletResponseAware {
+public class requestShellAction extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 
     HostSystem hS;
-    
+    String displayName;
+    String user;
+    String host;
+    int port;
+
     List<SessionOutput> outputList;
     String command;
     HttpServletResponse servletResponse;
@@ -56,20 +61,21 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
 
     /**
      * creates composite terminals if there are errors or authentication issues.
-     *
+     * https://localhost:8443/shell/request.action?displayName=test&host=mininet&user=demo&port=22&password=demo
      * @return
      */
-    @Action(value = "/test/script",
+    @Action(value = "/shell/request",
             results = {
-                @Result(name = "success", location = "/test/script_secure_shell.jsp")
+                @Result(name = "success", location = "/shell/secure_shell.jsp")
             }
     )
     public String createTerms() {
-        HostSystem hS = new HostSystem();
-        hS.setDisplayNm("Mininet");
-        hS.setHost("mininet");
-        hS.setUser("demo");
-        hS.setPort(22);
+        System.out.println("DisplayName: "+displayName+". Host: "+host+". User: "+user+". Port: "+port);
+        hS = new HostSystem();
+        hS.setDisplayNm(displayName);
+        hS.setHost(host);
+        hS.setUser(user);
+        hS.setPort(port);
         hS.setStatusCd(HostSystem.SUCCESS_STATUS);
         hS.setId((long) 1);
 
@@ -78,24 +84,21 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
         if (sessionId == null) {
             sessionId = (long) 1;
         }
-        System.out.println("userId: " + userId);
-        System.out.println("sessionId: " + sessionId);
-        System.out.println("Settin system list");
+
         try {
-            setSystemList2(userId, sessionId, hS);
+            setSystem(userId, sessionId, hS);
         } catch (JSchException ex) {
-            Logger.getLogger(TestRunScript.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(requestShellAction.class.getName()).log(Level.SEVERE, null, ex);
         }
         return SUCCESS;
     }
 
-    private void setSystemList2(Long userId, Long sessionId, HostSystem hostSystem) throws JSchException {
+    private void setSystem(Long userId, Long sessionId, HostSystem hostSystem) throws JSchException {
+        System.out.println("SetSystem");
         JSch jsch = new JSch();
         SchSession schSession = null;
         try {
-            System.out.println("GET APP KEY");
             ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
-            System.out.println("GET APP KEY - RECEIVED");
             //check to see if passphrase has been provided
             if (passphrase == null || passphrase.trim().equals("")) {
                 passphrase = appKey.getPassphrase();
@@ -104,26 +107,25 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
                     passphrase = "";
                 }
             }
-
-            System.out.println("AppKey: " + appKey.getId().toString());
             //add private key
-            
             jsch.addIdentity(appKey.getId().toString(), appKey.getPrivateKey().trim().getBytes(), appKey.getPublicKey().getBytes(), passphrase.getBytes());
 
             //create session
             Session session = jsch.getSession(hostSystem.getUser(), hostSystem.getHost(), hostSystem.getPort());
+            
             session.setPassword("demo");
-
             //set password if it exists
             if (password != null && !password.trim().equals("")) {
                 session.setPassword(password);
             }
+
             session.setConfig("StrictHostKeyChecking", "no");
             session.connect(SESSION_TIMEOUT);
             Channel channel = session.openChannel("shell");
             if ("true".equals(AppConfig.getProperty("agentForwarding"))) {
                 ((ChannelShell) channel).setAgentForwarding(true);
             }
+
             ((ChannelShell) channel).setPtyType("vt102");
 
             InputStream outFromChannel = channel.getInputStream();
@@ -157,18 +159,8 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
             userSchSessionMap.put((long) 1, userSchSession);
         } catch (Exception e) {
             hostSystem.setErrorMsg(e.getMessage());
-            System.out.println("MEssage: "+e.getMessage());
-/*            System.out.println(e.getMessage().toLowerCase());
-            if (e.getMessage().toLowerCase().contains("userauth fail")) {
-                hostSystem.setStatusCd(HostSystem.PUBLIC_KEY_FAIL_STATUS);
-            } else if (e.getMessage().toLowerCase().contains("auth fail") || e.getMessage().toLowerCase().contains("auth cancel")) {
-                hostSystem.setStatusCd(HostSystem.AUTH_FAIL_STATUS);
-            } else {
-                hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
-            }
-*/        
+            System.out.println("Message error: " + e.getMessage());
         }
-
         systemList.add(schSession.getHostSystem());
     }
 
@@ -203,6 +195,39 @@ public class TestRunScript extends ActionSupport implements ServletRequestAware,
     }
 
     public static void setUserSchSessionMap(Map<Long, UserSchSessions> userSchSessionMap) {
-        TestSecureShellAction.userSchSessionMap = userSchSessionMap;
+        //TestSecureShellAction.userSchSessionMap = userSchSessionMap;
     }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
 }

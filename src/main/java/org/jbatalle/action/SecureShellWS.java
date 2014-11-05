@@ -13,8 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.keybox.test.action;
+package org.jbatalle.action;
 
+import com.keybox.test.action.*;
 import com.keybox.manage.socket.*;
 import com.google.gson.Gson;
 import com.keybox.common.util.AppConfig;
@@ -39,9 +40,9 @@ import java.util.Map;
  * class to run commands and start thread to send web socket terminal output
  * Josep Batallé (josep.batalle@i2cat.net)
  */
-@ServerEndpoint(value = "/test/terms.ws", configurator = GetHttpSessionConfigurator.class)
+@ServerEndpoint(value = "/shell/terms.ws", configurator = GetHttpSessionConfigurator.class)
 @SuppressWarnings("unchecked")
-public class TestSecureShellWS {
+public class SecureShellWS {
 
     private HttpSession httpSession;
     private Session session;
@@ -103,7 +104,7 @@ System.out.println("After for");
 System.out.println("Prev Id: "+id);
                     //get servletRequest.getSession() for user
 System.out.println("Entra en user?");
-                    UserSchSessions userSchSessions = TestRunScript.getUserSchSessionMap().get(sessionId);
+                    UserSchSessions userSchSessions = requestShellAction.getUserSchSessionMap().get(sessionId);
                     if (userSchSessions != null) {
 System.out.println("Entra?");
                         SchSession schSession = userSchSessions.getSchSessionMap().get(id);
@@ -131,7 +132,6 @@ System.out.println("Entra? yes");
 
     @OnClose
     public void onClose() {
-System.out.println("CLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOSE CONNECTION");
         if (TestSecureShellAction.getUserSchSessionMap() != null) {
             UserSchSessions userSchSessions = TestSecureShellAction.getUserSchSessionMap().get(sessionId);
             if (userSchSessions != null) {

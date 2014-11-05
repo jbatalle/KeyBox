@@ -67,7 +67,6 @@ public class SessionOutputUtil {
      * @param sessionOutput session output object
      */
     public static void addOutput(Long sessionId, SessionOutput sessionOutput) {
-        System.out.println("AddOutput");
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput == null) {
             userSessionsOutputMap.put(sessionId, new UserSessionsOutput());
@@ -87,10 +86,8 @@ public class SessionOutputUtil {
      * @param count The length
      */
     public static void addToOutput(Long sessionId, Long hostSystemId, char value[], int offset, int count) {
-System.out.println("addToOutput");
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput != null) {
-            System.out.println("addToOutput no null");
             userSessionsOutput.getSessionOutputMap().get(hostSystemId).append(value, offset, count);
         }
 

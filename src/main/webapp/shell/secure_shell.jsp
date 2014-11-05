@@ -49,7 +49,7 @@ $(document).ready(function () {
 
         drop: function (event, ui) {
             var id = ui.draggable.attr("id").replace("run_cmd_", "");
-            $.ajax({ url: '../test/disconnectTerm.action?id=' + id, cache: false});
+            $.ajax({ url: '../shell/disconnectTerm.action?id=' + id, cache: false});
             ui.draggable.remove();
 
         }
