@@ -1,13 +1,11 @@
 package org.jbatalle.action;
 
-import com.keybox.test.action.*;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.keybox.common.util.AppConfig;
-import com.keybox.common.util.AuthUtil;
 import com.keybox.manage.db.PrivateKeyDB;
 import com.keybox.manage.model.ApplicationKey;
 import com.keybox.manage.model.HostSystem;
@@ -80,7 +78,8 @@ public class requestShellAction extends ActionSupport implements ServletRequestA
         hS.setId((long) 1);
 
         Long userId = (long) 1;
-        Long sessionId = AuthUtil.getSessionId(servletRequest.getSession());
+//        Long sessionId = AuthUtil.getSessionId(servletRequest.getSession());
+        Long sessionId = (long) 1;
         if (sessionId == null) {
             sessionId = (long) 1;
         }
@@ -112,7 +111,7 @@ public class requestShellAction extends ActionSupport implements ServletRequestA
 
             //create session
             Session session = jsch.getSession(hostSystem.getUser(), hostSystem.getHost(), hostSystem.getPort());
-            
+
             session.setPassword("demo");
             //set password if it exists
             if (password != null && !password.trim().equals("")) {

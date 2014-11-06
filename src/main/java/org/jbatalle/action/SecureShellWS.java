@@ -50,7 +50,7 @@ public class SecureShellWS {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        System.out.println("TestSecureSHellWS. On Open. Session: " + session.getId());
+System.out.println("TestSecureSHellWS. On Open. Session: " + session.getId());
         //set websocket timeout
         if (StringUtils.isNotEmpty(AppConfig.getProperty("websocketTimeout"))) {
             session.setMaxIdleTimeout(Long.parseLong(AppConfig.getProperty("websocketTimeout")) * 60000);
@@ -62,8 +62,7 @@ public class SecureShellWS {
         this.sessionId = AuthUtil.getSessionId(httpSession);
         this.session = session;
 
-        System.out.println("TestSecureShellWS - HttpSessionId :" + this.sessionId);
-        System.out.println("TestSecureShellWS - sesion getId :" + session.getId());
+        System.out.println("TestSecureShellWS - HttpSessionId :" + this.sessionId +". Sesion getId :" + session.getId());
         Long t = (long) 1;
         Object o = EncryptionUtil.encrypt(t.toString());
         String sessionIdStr = EncryptionUtil.decrypt((String) o);

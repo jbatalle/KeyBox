@@ -37,7 +37,8 @@ public class SSHUtil {
 //    public static final String KEY_PATH = DBUtils2.class.getClassLoader().getResource("keydb").getPath();
 
     //key type - rsa or dsa
-    public static final String KEY_TYPE = AppConfig.getProperty("sshKeyType");
+//    public static final String KEY_TYPE = AppConfig.getProperty("sshKeyType");
+    public static final String KEY_TYPE = "rsa";
 
     //private key name
     public static final String PVT_KEY = "pvtKey_id_" + KEY_TYPE;

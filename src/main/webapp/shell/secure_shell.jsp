@@ -212,13 +212,13 @@ $(document).ready(function () {
     });
 
     var loc = window.location, ws_uri;
-/*    if (loc.protocol === "https:") {
+    if (loc.protocol === "https:") {
         ws_uri = "wss:";
     } else {
         ws_uri = "ws:";
     }
     ws_uri += "//" + loc.host + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
-*/  ws_uri = "wss://" + loc.host + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
+//  ws_uri = "wss://" + loc.host + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
 //ws_uri = "wss://" + loc.host + ':8443' + loc.pathname + '/../terms.ws?t=' + new Date().getTime();
     
     var connection = new WebSocket(ws_uri);
