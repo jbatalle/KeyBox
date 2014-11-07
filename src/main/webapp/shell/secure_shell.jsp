@@ -360,14 +360,17 @@ $(document).ready(function () {
 -->
 <div class="term-container container">
     <div class="termwrapper">
-    <s:iterator value="systemList">
-        <div id="run_cmd_<s:property value="id"/>" class="run_cmd_active run_cmd">
-            <h6 class="term-header"><s:property value="displayLabel"/></h6>
-            <div class="term">
-                <div id="output_<s:property value="id"/>" class="output"></div>
+    <s:if test="%{!systemList.isEmpty()}">
+        <s:iterator value="systemList">
+            <div id="run_cmd_<s:property value="id"/>" class="run_cmd_active run_cmd">
+                <h6 class="term-header"><s:property value="displayLabel"/></h6>
+                <div class="term">
+                    <div id="output_<s:property value="id"/>" class="output"></div>
+                </div>
             </div>
-        </div>
-    </s:iterator>
+        </s:iterator>
+     </s:if>
+    <s:else>System list is empty. Show form to try the connection</s:else>   
     </div>
 </div>
     

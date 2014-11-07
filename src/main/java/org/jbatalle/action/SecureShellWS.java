@@ -62,7 +62,6 @@ System.out.println("TestSecureSHellWS. On Open. Session: " + session.getId());
         this.sessionId = AuthUtil.getSessionId(httpSession);
         this.session = session;
 
-        System.out.println("TestSecureShellWS - HttpSessionId :" + this.sessionId +". Sesion getId :" + session.getId());
         Long t = (long) 1;
         Object o = EncryptionUtil.encrypt(t.toString());
         String sessionIdStr = EncryptionUtil.decrypt((String) o);
@@ -70,7 +69,6 @@ System.out.println("TestSecureSHellWS. On Open. Session: " + session.getId());
             sessionId = Long.parseLong(sessionIdStr);
         }
 
-        System.out.println("TestSecureShellWS - sesionId :" + sessionId);
         Runnable run = new SentOutputTask(sessionId, session);
         Thread thread = new Thread(run);
         thread.start();
@@ -92,13 +90,10 @@ System.out.println("TestSecureSHellWS. On Open. Session: " + session.getId());
                 if (keyCodeDbl != null) {
                     keyCode = keyCodeDbl.intValue();
                 }
-System.out.println("Before for "+command + " KeyCode: "+keyCode);
-List<String> is = new ArrayList<String>();
-is.add("1");
-jsonRoot.put("id", is);
-System.out.println("Before for "+command);
+                List<String> is = new ArrayList<String>();
+                is.add("1");
+                jsonRoot.put("id", is);
                 for (String idStr : (ArrayList<String>) jsonRoot.get("id")) {
-System.out.println("After for");
                     Long id = Long.parseLong(idStr);
 System.out.println("Prev Id: "+id);
                     //get servletRequest.getSession() for user

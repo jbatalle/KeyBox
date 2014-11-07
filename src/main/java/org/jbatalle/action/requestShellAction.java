@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.SessionException;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -96,7 +97,7 @@ public class requestShellAction extends ActionSupport implements ServletRequestA
         System.out.println("SetSystem");
         JSch jsch = new JSch();
         SchSession schSession = null;
-        try {
+        
             ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
             //check to see if passphrase has been provided
             if (passphrase == null || passphrase.trim().equals("")) {
@@ -119,8 +120,14 @@ public class requestShellAction extends ActionSupport implements ServletRequestA
             }
 
             session.setConfig("StrictHostKeyChecking", "no");
-            session.connect(SESSION_TIMEOUT);
-            Channel channel = session.openChannel("shell");
+            try{
+                session.connect(SESSION_TIMEOUT);
+            }catch(JSchException e){
+                System.out.println("Message "+e.getMessage());
+//                System.out.println("Host not found");
+                return;
+            }
+    try {        Channel channel = session.openChannel("shell");
             if ("true".equals(AppConfig.getProperty("agentForwarding"))) {
                 ((ChannelShell) channel).setAgentForwarding(true);
             }
